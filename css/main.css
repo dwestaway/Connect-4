@@ -8,3 +8,8 @@ canvas {
 	background-color: blue;
 	border: 5px solid black;
 }
+h1 {
+	font-size: 60px;
+	font-family: monospace;
+	text-align: center;
+}
