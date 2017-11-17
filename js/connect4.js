@@ -47,20 +47,20 @@ $(function() { //jquery handler
         //Calculate the row and column into exact coordinates on canvas
         function calculateCircle(col, row, name) {
           //cx = center x y coordinates calculated from column and row number
-          var cx = (canvas.width / 7) * (col + 1) - 50;
-          var cy = canvas.height - ((canvas.height / 6) * (row + 1) - 50);
+          var centerX = (canvas.width / 7) * (col + 1) - 50;
+          var centerY = canvas.height - ((canvas.height / 6) * (row + 1) - 50);
 
           if(name == "red")
           {
-            createCircle(cx, cy, circle.red.colour);
+            createCircle(centerX, centerY, circle.red.colour);
           }
           else if(name == "yellow")
           {
-            createCircle(cx, cy, circle.yellow.colour);
+            createCircle(centerX, centerY, circle.yellow.colour);
           }
           else
           {
-            createCircle(cx, cy, 'white');
+            createCircle(centerX, centerY, 'white');
           }
 
         }
@@ -80,11 +80,31 @@ $(function() { //jquery handler
             return false;
 
         }
+        
+        var turn = 'red';
 
-        drawCircle(1, 'yellow');
-        drawCircle(1, 'red');
-        drawCircle(0, 'yellow');
-        drawCircle(2, 'red');
+        canvas.addEventListener('click', function(evt) {
+
+            if(turn == 'red')
+            {
+                drawCircle(getColumnClick(event), 'red');
+                turn = 'yellow';
+            }
+            else
+            {
+                drawCircle(getColumnClick(event), 'yellow');
+                turn = 'red';
+            }
+
+            refreshGrid();
+        });
+
+        function getColumnClick(event) {
+            var rect = canvas.getBoundingClientRect();
+            var x = event.clientX - rect.left;
+
+            return Math.floor(x / 100);
+        }
 
 
         refreshGrid();

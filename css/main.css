@@ -6,7 +6,7 @@ body {
 
 canvas {
 	background-color: blue;
-	border: 5px solid black;
+	border: 5px solid blue;
 }
 h1 {
 	font-size: 60px;
