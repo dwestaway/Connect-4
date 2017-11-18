@@ -4,12 +4,12 @@ $(function() { //jquery handler
         var circle = {
             yellow:
             {
-                name: 'yellowPlayer',
+                name: 'Yellow Player',
                 colour: 'yellow',
             },
             red:
             {
-                name: 'redPlayer',
+                name: 'Red Player',
                 colour: 'red',
             }
         };
@@ -78,7 +78,7 @@ $(function() { //jquery handler
                 {
                     grid[row][column] = colour;
 
-                    checkForWin(row, column);
+                    checkForWin(row, column, colour);
 
                     return true;
                 }
@@ -122,10 +122,22 @@ $(function() { //jquery handler
             var rect = canvas.getBoundingClientRect();
             var x = event.clientX - rect.left;
 
-            return Math.floor(x / 100);
+            return Math.floor(x / 100); //divide by 100 because canvas is 700x600 and grid is 7x6, then round down
         }
 
-        function checkForWin(row, col) {
+        function checkForWin(row, col, colour) {
+
+          var winner;
+
+          if(colour == 'red')
+          {
+              winner = circle.red.name;
+          }
+          else if (colour == 'yellow')
+          {
+              winner = circle.yellow.name;
+          }
+
 
           //Check for 4 up
           //check if higher than third row up or row index will be out of range
@@ -137,36 +149,190 @@ $(function() { //jquery handler
               {
                 if(grid[row][col] == grid[row-3][col])
                 {
-                    alert("winner");
+                    alert(winner + ' is the winner!');
                 }
               }
             }
           }
 
-          //Check for 4 to the right
+          //Check for 3 matches to the right
           if(grid[row][col] == grid[row][col+1])
           {
             if(grid[row][col] == grid[row][col+2])
             {
               if(grid[row][col] == grid[row][col+3])
               {
-                  alert("winner");
+                  alert(winner + ' is the winner!');
               }
             }
           }
-          //Check for 4 to the left
+
+          //Check for 3 matches to the left
           if(grid[row][col] == grid[row][col-1])
           {
             if(grid[row][col] == grid[row][col-2])
             {
               if(grid[row][col] == grid[row][col-3])
               {
-                  alert("winner");
+                  alert(winner + ' is the winner!');
               }
             }
           }
 
+          //Check for 1 match left and 2 right
+          if(grid[row][col] == grid[row][col-1])
+          {
+            if(grid[row][col] == grid[row][col+1])
+            {
+              if(grid[row][col] == grid[row][col+2])
+              {
+                  alert(winner + ' is the winner!');
+              }
+            }
+          }
+          //Check for 2 matches left and 1 right
+          if(grid[row][col] == grid[row][col-1])
+          {
+            if(grid[row][col] == grid[row][col-2])
+            {
+              if(grid[row][col] == grid[row][col+1])
+              {
+                  alert(winner + ' is the winner!');
+              }
+            }
+          }
+
+          ///////////////////////
+          //Diagonal 4 in a rows
+          ///////////////////////
+
+          //Check for bottom left to top right
+          if(grid[row][col] == grid[row+1][col+1])
+          {
+            if(grid[row][col] == grid[row+2][col+2])
+            {
+              if(grid[row][col] == grid[row+3][col+3])
+              {
+                  alert(winner + ' is the winner!');
+              }
+            }
+          }
+
+          //Check for top right to bottom left
+          if(row > 2)
+          {
+            if(grid[row][col] == grid[row-1][col-1])
+            {
+              if(grid[row][col] == grid[row-2][col-2])
+              {
+                if(grid[row][col] == grid[row-3][col-3])
+                {
+                    alert(winner + ' is the winner!');
+                }
+              }
+            }
+          }
+
+          //Check for bottom right to top left
+          if(grid[row][col] == grid[row+1][col-1])
+          {
+            if(grid[row][col] == grid[row+2][col-2])
+            {
+              if(grid[row][col] == grid[row+3][col-3])
+              {
+                  alert(winner + ' is the winner!');
+              }
+            }
+          }
+
+          //Check for top left to bottom right
+          if(row > 2)
+          {
+            if(grid[row][col] == grid[row-1][col+1])
+            {
+              if(grid[row][col] == grid[row-2][col+2])
+              {
+                if(grid[row][col] == grid[row-3][col+3])
+                {
+                    alert(winner + ' is the winner!');
+                }
+              }
+            }
+          }
+
+          //O/////
+          ///X////
+          ////O///
+          /////O//
+          if(row > 1)
+          {
+            if(grid[row][col] == grid[row+1][col-1])
+            {
+              if(grid[row][col] == grid[row-1][col+1])
+              {
+                if(grid[row][col] == grid[row-2][col+2])
+                {
+                    alert(winner + ' is the winner!');
+                }
+              }
+            }
+          }
+
+          //O/////
+          ///O////
+          ////X///
+          /////O//
+          if(row > 0)
+          {
+            if(grid[row][col] == grid[row+1][col-1])
+            {
+              if(grid[row][col] == grid[row+2][col-2])
+              {
+                if(grid[row][col] == grid[row-1][col+1])
+                {
+                    alert(winner + ' is the winner!');
+                }
+              }
+            }
+          }
+
+          /////O//
+          ////X///
+          ///O////
+          //O/////
+          if(row > 1)
+          {
+            if(grid[row][col] == grid[row+1][col+1])
+            {
+              if(grid[row][col] == grid[row-1][col-1])
+              {
+                if(grid[row][col] == grid[row-2][col-2])
+                {
+                    alert(winner + ' is the winner!');
+                }
+              }
+            }
+          }
+
+          /////O//
+          ////O///
+          ///X////
+          //O/////
+          if(row > 0)
+          {
+            if(grid[row][col] == grid[row+1][col+1])
+            {
+              if(grid[row][col] == grid[row+2][col+2])
+              {
+                if(grid[row][col] == grid[row-1][col-1])
+                {
+                    alert(winner + ' is the winner!');
+                }
+              }
+            }
+          }
         }
+
 
 
         refreshGrid();
