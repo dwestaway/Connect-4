@@ -111,8 +111,6 @@ $(function() { //jquery handler
             }
 
             refreshGrid();
-
-            //console.log(grid);
         });
 
         //Find out which column is clicked
@@ -124,8 +122,6 @@ $(function() { //jquery handler
         }
 
         function checkForWin(row, col, colour) {
-
-
 
           //Check for 4 up
           //check if higher than third row up or row index will be out of range
@@ -153,7 +149,7 @@ $(function() { //jquery handler
             {
               if(grid[row][col] == grid[row][col+3])
               {
-                  alert(winner + ' is the winner!');
+                  winner(colour);
               }
             }
           }
@@ -166,7 +162,7 @@ $(function() { //jquery handler
             {
               if(grid[row][col] == grid[row][col-3])
               {
-                  alert(winner + ' is the winner!');
+                  winner(colour);
               }
             }
           }
@@ -179,7 +175,7 @@ $(function() { //jquery handler
             {
               if(grid[row][col] == grid[row][col+2])
               {
-                  alert(winner + ' is the winner!');
+                  winner(colour);
               }
             }
           }
@@ -191,7 +187,7 @@ $(function() { //jquery handler
             {
               if(grid[row][col] == grid[row][col+1])
               {
-                  alert(winner + ' is the winner!');
+                  winner(colour);
               }
             }
           }
@@ -205,13 +201,17 @@ $(function() { //jquery handler
           ////O///
           ///O////
           //X/////
-          if(grid[row][col] == grid[row+1][col+1])
+          //check if row is lower than 4th row, no need to check for this diagonal if it is higher
+          if(row < 3)
           {
-            if(grid[row][col] == grid[row+2][col+2])
+            if(grid[row][col] == grid[row+1][col+1])
             {
-              if(grid[row][col] == grid[row+3][col+3])
+              if(grid[row][col] == grid[row+2][col+2])
               {
-                  alert(winner + ' is the winner!');
+                if(grid[row][col] == grid[row+3][col+3])
+                {
+                    winner(colour);
+                }
               }
             }
           }
@@ -229,7 +229,7 @@ $(function() { //jquery handler
               {
                 if(grid[row][col] == grid[row-3][col-3])
                 {
-                    alert(winner + ' is the winner!');
+                    winner(colour);
                 }
               }
             }
@@ -240,13 +240,17 @@ $(function() { //jquery handler
           ///O////
           ////O///
           /////X//
-          if(grid[row][col] == grid[row+1][col-1])
+          //check if row is lower than 4th row, no need to check for this diagonal if it is higher
+          if(row < 3)
           {
-            if(grid[row][col] == grid[row+2][col-2])
+            if(grid[row][col] == grid[row+1][col-1])
             {
-              if(grid[row][col] == grid[row+3][col-3])
+              if(grid[row][col] == grid[row+2][col-2])
               {
-                  alert(winner + ' is the winner!');
+                if(grid[row][col] == grid[row+3][col-3])
+                {
+                    winner(colour);
+                }
               }
             }
           }
@@ -264,7 +268,7 @@ $(function() { //jquery handler
               {
                 if(grid[row][col] == grid[row-3][col+3])
                 {
-                    alert(winner + ' is the winner!');
+                    winner(colour);
                 }
               }
             }
@@ -274,7 +278,8 @@ $(function() { //jquery handler
           ///X////
           ////O///
           /////O//
-          if(row > 1)
+          //check if row is between 1 and 5, no need to check for this diagonal out of that range
+          if(row > 1 && row < 5)
           {
             if(grid[row][col] == grid[row+1][col-1])
             {
@@ -282,7 +287,7 @@ $(function() { //jquery handler
               {
                 if(grid[row][col] == grid[row-2][col+2])
                 {
-                    alert(winner + ' is the winner!');
+                  winner(colour);
                 }
               }
             }
@@ -292,7 +297,8 @@ $(function() { //jquery handler
           ///O////
           ////X///
           /////O//
-          if(row > 0)
+          //check if row is between 1 and 4, no need to check for this diagonal out of that range
+          if(row > 0 && row < 4)
           {
             if(grid[row][col] == grid[row+1][col-1])
             {
@@ -300,17 +306,19 @@ $(function() { //jquery handler
               {
                 if(grid[row][col] == grid[row-1][col+1])
                 {
-                    alert(winner + ' is the winner!');
+                    winner(colour);
                 }
               }
             }
+
           }
 
           /////O//
           ////X///
           ///O////
           //O/////
-          if(row > 1)
+          //check if row is between 1 and 5, no need to check for this diagonal out of that range
+          if(row > 1 && row < 5)
           {
             if(grid[row][col] == grid[row+1][col+1])
             {
@@ -318,7 +326,7 @@ $(function() { //jquery handler
               {
                 if(grid[row][col] == grid[row-2][col-2])
                 {
-                    alert(winner + ' is the winner!');
+                    winner(colour);
                 }
               }
             }
@@ -328,7 +336,8 @@ $(function() { //jquery handler
           ////O///
           ///X////
           //O/////
-          if(row > 0)
+          //check if row is between 1 and 4, no need to check for this diagonal out of that range
+          if(row > 0 && row < 4)
           {
             if(grid[row][col] == grid[row+1][col+1])
             {
@@ -336,7 +345,7 @@ $(function() { //jquery handler
               {
                 if(grid[row][col] == grid[row-1][col-1])
                 {
-                    alert(winner + ' is the winner!');
+                    winner(colour);
                 }
               }
             }
