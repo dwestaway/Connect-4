@@ -156,6 +156,7 @@ $(function() { //jquery handler
           }
 
           //Check for 3 matches to the right
+          //XOOO//
           if(grid[row][col] == grid[row][col+1])
           {
             if(grid[row][col] == grid[row][col+2])
@@ -168,6 +169,7 @@ $(function() { //jquery handler
           }
 
           //Check for 3 matches to the left
+          //OOOX//
           if(grid[row][col] == grid[row][col-1])
           {
             if(grid[row][col] == grid[row][col-2])
@@ -180,6 +182,7 @@ $(function() { //jquery handler
           }
 
           //Check for 1 match left and 2 right
+          //OXOO//
           if(grid[row][col] == grid[row][col-1])
           {
             if(grid[row][col] == grid[row][col+1])
@@ -191,6 +194,7 @@ $(function() { //jquery handler
             }
           }
           //Check for 2 matches left and 1 right
+          //OOXO//
           if(grid[row][col] == grid[row][col-1])
           {
             if(grid[row][col] == grid[row][col-2])
@@ -207,6 +211,10 @@ $(function() { //jquery handler
           ///////////////////////
 
           //Check for bottom left to top right
+          /////O//
+          ////O///
+          ///O////
+          //X/////
           if(grid[row][col] == grid[row+1][col+1])
           {
             if(grid[row][col] == grid[row+2][col+2])
@@ -219,6 +227,10 @@ $(function() { //jquery handler
           }
 
           //Check for top right to bottom left
+          /////X//
+          ////O///
+          ///O////
+          //O/////
           if(row > 2)
           {
             if(grid[row][col] == grid[row-1][col-1])
@@ -234,6 +246,10 @@ $(function() { //jquery handler
           }
 
           //Check for bottom right to top left
+          //O/////
+          ///O////
+          ////O///
+          /////X//
           if(grid[row][col] == grid[row+1][col-1])
           {
             if(grid[row][col] == grid[row+2][col-2])
@@ -246,6 +262,10 @@ $(function() { //jquery handler
           }
 
           //Check for top left to bottom right
+          //X/////
+          ///O////
+          ////O///
+          /////O//
           if(row > 2)
           {
             if(grid[row][col] == grid[row-1][col+1])
