@@ -45,12 +45,10 @@ $(function() { //jquery handler
           if(name == "red")
           {
               createCircle(centerX, centerY, circle.red.colour);
-
           }
           else if(name == "yellow")
           {
               createCircle(centerX, centerY, circle.yellow.colour);
-
           }
           else
           {
@@ -97,19 +95,19 @@ $(function() { //jquery handler
             //swap turns, change text and place circle on each click
             if(turn == 'red')
             {
-                drawCircle(getColumnClick(event), 'red');
-                turn = 'yellow';
-
                 text.innerHTML = "Yellow Player's Turn";
                 text.style.color = "yellow";
-            }
+
+                drawCircle(getColumnClick(event), 'red');
+                turn = 'yellow';
+          }
             else
             {
-                drawCircle(getColumnClick(event), 'yellow');
-                turn = 'red';
-
                 text.innerHTML = "Red Player's Turn";
                 text.style.color = "red";
+
+                drawCircle(getColumnClick(event), 'yellow');
+                turn = 'red';
             }
 
             refreshGrid();
@@ -127,16 +125,6 @@ $(function() { //jquery handler
 
         function checkForWin(row, col, colour) {
 
-          var winner;
-
-          if(colour == 'red')
-          {
-              winner = circle.red.name;
-          }
-          else if (colour == 'yellow')
-          {
-              winner = circle.yellow.name;
-          }
 
 
           //Check for 4 up
@@ -149,7 +137,9 @@ $(function() { //jquery handler
               {
                 if(grid[row][col] == grid[row-3][col])
                 {
-                    alert(winner + ' is the winner!');
+                    //text.innerHTML = winner ' is the winner!';
+
+                    winner(colour);
                 }
               }
             }
@@ -206,9 +196,9 @@ $(function() { //jquery handler
             }
           }
 
-          ///////////////////////
-          //Diagonal 4 in a rows
-          ///////////////////////
+          ////////////////////////
+          //Diagonal 4 in a rows//
+          ////////////////////////
 
           //Check for bottom left to top right
           /////O//
@@ -351,6 +341,28 @@ $(function() { //jquery handler
               }
             }
           }
+        }
+
+        //add reset grid function
+
+        //Change text and colour to display the winner
+        function winner(colour)
+        {
+            text = document.getElementById('text');
+
+            var winner;
+
+            if(colour == 'red')
+            {
+                winner = circle.red.name;
+            }
+            else if (colour == 'yellow')
+            {
+                winner = circle.yellow.name;
+            }
+
+            text.innerHTML = winner + ' is the winner!';
+            text.style.color = colour;
         }
 
 
