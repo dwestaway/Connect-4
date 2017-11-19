@@ -21,7 +21,7 @@ h2 {
 	-webkit-text-stroke-width: 1px;
   -webkit-text-stroke-color: black;
 }
-#redButton {
+.redButton {
 		background-color: red;
     border: 2px solid black;
 		border-radius: 50%;
@@ -32,11 +32,10 @@ h2 {
     text-align: center;
     text-decoration: none;
     font-size: 16px;
-		margin: 10px;
 		display: inline;
 		float: none;
 }
-#yellowButton {
+.yellowButton {
 		background-color: yellow;
     border: 2px solid black;
 		border-radius: 50%;
@@ -47,7 +46,6 @@ h2 {
     text-align: center;
     text-decoration: none;
     font-size: 16px;
-		margin: 10px;
 		display: inline;
 		float: none;
 }

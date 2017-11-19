@@ -70,8 +70,16 @@ $(function() { //jquery handler
         //Add circle colour into grid array
         //loop through rows on the column parameter and check if its empty, first empty row add the circle of chosen colour and end loop
         function drawCircle(column, colour) {
+
             for (var row = 0; row < grid.length; row++)
             {
+              if(grid[5][column] == 'red' || grid[5][column] == 'yellow')
+              {
+                  alert('Column Full');
+
+                  return true;
+              }
+
                 if(grid[row][column] == '')
                 {
                     grid[row][column] = colour;
@@ -82,9 +90,9 @@ $(function() { //jquery handler
                 }
             }
             return false;
-
         }
 
+        //Red player always starts
         var turn = 'red';
 
         //Mouse click listener
