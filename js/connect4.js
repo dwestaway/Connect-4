@@ -87,11 +87,13 @@ $(function() { //jquery handler
                             playerCol = column;
                             playerRow = row;
                         }
+                        if(colour == 'yellow')
+                        {
+                            //AIcheckFor3InRow();
+                        }
                     }
 
                     return true;
-
-
                 }
             }
             return false;
@@ -133,15 +135,19 @@ $(function() { //jquery handler
 
                     AIcheckForCounterMove(playerRow,playerCol);
 
-                    //AIcheckFor3InRow();
+                    //AIcheckForFreeSpace();
 
                     if(AIrandom == true)
                     {
-                        column = Math.floor((Math.random() * 7) + 1);
+                        column = 1;
+
+                        //column = Math.floor((Math.random() * 7) + 1);
                     }
                     else if(AIrandom == false)
                     {
-                        column = AIcol;
+                        column = AIcol + 1;
+
+                        alert('countered lol');
                     }
 
                     drawCircle(column - 1, 'yellow');
@@ -180,12 +186,13 @@ $(function() { //jquery handler
             {
               if(grid[row][col] == grid[row-2][col])
               {
-                  AIcol = col + 1;
+                  AIcol = col;
                   AIrandom = false;
               }
             }
           }
           //Check for 2 matches to the right and left empty
+          ///V////
           //XOOO//
           if(grid[row][col] == grid[row][col+1])
           {
@@ -200,6 +207,7 @@ $(function() { //jquery handler
             }
           }
           //Check for 2 matches to the left and right empty
+          ////V///
           //OOOX//
           if(grid[row][col] == grid[row][col-1])
           {
@@ -207,10 +215,88 @@ $(function() { //jquery handler
             {
                 if(grid[row][col+1] == '')
                 {
-                    AIcol = col + 2;
+                    AIcol = col + 1;
                     AIrandom = false;
                 }
 
+            }
+          }
+          //V/////
+          //OXOO//
+          if(grid[row][col+1] == '')
+          {
+            if(grid[row][col] == grid[row][col+2])
+            {
+              if(grid[row][col] == grid[row][col+3])
+              {
+                  AIcol = col + 1;
+                  AIrandom = false;
+              }
+            }
+          }
+          ////V///
+          //OXOO//
+          if(grid[row][col-1] == '')
+          {
+            if(grid[row][col] == grid[row][col+1])
+            {
+              if(grid[row][col] == grid[row][col-2])
+              {
+                  AIcol = col - 1;
+                  AIrandom = false;
+              }
+            }
+          }
+          /////V//
+          //OXOO//
+          if(grid[row][col-2] == '')
+          {
+            if(grid[row][col] == grid[row][col-1])
+            {
+              if(grid[row][col] == grid[row][col-3])
+              {
+                  AIcol = col - 2;
+                  AIrandom = false;
+              }
+            }
+          }
+          /////V//
+          //OOXO//
+          if(grid[row][col-1] == '')
+          {
+            if(grid[row][col] == grid[row][col-2])
+            {
+              if(grid[row][col] == grid[row][col-3])
+              {
+                  AIcol = col - 1;
+                  AIrandom = false;
+              }
+            }
+          }
+          ///V////
+          //OOXO//
+          if(grid[row][col+1] == '')
+          {
+            if(grid[row][col] == grid[row][col-1])
+            {
+              if(grid[row][col] == grid[row][col-3])
+              {
+                  AIcol = col + 1;
+                  AIrandom = false;
+              }
+            }
+          }
+          //V/////
+          //OOXO//
+          if(grid[row][col+2] == '')
+          {
+            if(grid[row][col] == grid[row][col+1])
+            {
+              if(grid[row][col] == grid[row][col+3])
+              {
+                  AIcol = col + 2;
+                  AIrandom = false;
+              }
             }
           }
         }
