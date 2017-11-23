@@ -81,6 +81,7 @@ $(function() { //jquery handler
                     checkForWin(row, column, colour);
 
                     return true;
+
                 }
             }
             return false;
@@ -88,6 +89,8 @@ $(function() { //jquery handler
         }
 
         var turn = 'red';
+        var AIrandom = true;
+        var AIcol = 0;
 
         //Mouse click listener
         canvas.addEventListener('click', function(evt) {
@@ -100,6 +103,8 @@ $(function() { //jquery handler
                 text.innerHTML = "Yellow Player's Turn";
                 text.style.color = "yellow";
 
+                AIrandom = true;
+
                 drawCircle(getColumnClick(event), 'red');
 
                 if(AI == false)
@@ -110,7 +115,14 @@ $(function() { //jquery handler
                 {
                     var column;
 
-                    column = Math.floor((Math.random() * 7) + 1);
+                    if(AIrandom == true)
+                    {
+                        column = Math.floor((Math.random() * 7) + 1);
+                    }
+                    else if(AIrandom == false)
+                    {
+                        column = AIcol;
+                    }
 
                     drawCircle(column - 1, 'yellow');
                 }
@@ -140,21 +152,25 @@ $(function() { //jquery handler
             return Math.floor(x / 100); //divide by 100 because canvas is 700x600 and grid is 7x6, then round down
         }
 
-
-
         function checkForWin(row, col, colour) {
 
           //Check for 4 up
-          //check if higher than third row up or row index will be out of range
-          if(row > 2)
+          //check row height or index will be out of range
+          if(row > 1)
           {
             if(grid[row][col] == grid[row-1][col])
             {
               if(grid[row][col] == grid[row-2][col])
               {
-                if(grid[row][col] == grid[row-3][col])
+                AIcol = col + 1;
+                AIrandom = false;
+
+                if(row > 2)
                 {
-                    winner(colour);
+                  if(grid[row][col] == grid[row-3][col])
+                  {
+                      winner(colour);
+                  }
                 }
               }
             }
