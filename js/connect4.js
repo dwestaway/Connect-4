@@ -80,7 +80,17 @@ $(function() { //jquery handler
 
                     checkForWin(row, column, colour);
 
+                    if(AI == true)
+                    {
+                        if(colour == 'red')
+                        {
+                            playerCol = column;
+                            playerRow = row;
+                        }
+                    }
+
                     return true;
+
 
                 }
             }
@@ -91,6 +101,10 @@ $(function() { //jquery handler
         var turn = 'red';
         var AIrandom = true;
         var AIcol = 0;
+        var playerCol = 0;
+        var playerRow = 0;
+
+        //use player location for AI close to winner check
 
         //Mouse click listener
         canvas.addEventListener('click', function(evt) {
@@ -114,6 +128,12 @@ $(function() { //jquery handler
                 else if(AI == true)
                 {
                     var column;
+
+                    AIrandom = true;
+
+                    AIcheckForCounterMove(playerRow,playerCol);
+
+                    //AIcheckFor3InRow();
 
                     if(AIrandom == true)
                     {
@@ -151,26 +171,63 @@ $(function() { //jquery handler
 
             return Math.floor(x / 100); //divide by 100 because canvas is 700x600 and grid is 7x6, then round down
         }
+        function AIcheckForCounterMove(row, col) {
 
-        function checkForWin(row, col, colour) {
-
-          //Check for 4 up
-          //check row height or index will be out of range
+          //Check for 3 up
           if(row > 1)
           {
             if(grid[row][col] == grid[row-1][col])
             {
               if(grid[row][col] == grid[row-2][col])
               {
-                AIcol = col + 1;
-                AIrandom = false;
-
-                if(row > 2)
+                  AIcol = col + 1;
+                  AIrandom = false;
+              }
+            }
+          }
+          //Check for 2 matches to the right and left empty
+          //XOOO//
+          if(grid[row][col] == grid[row][col+1])
+          {
+            if(grid[row][col] == grid[row][col+2])
+            {
+                if(grid[row][col-1] == '')
                 {
-                  if(grid[row][col] == grid[row-3][col])
-                  {
-                      winner(colour);
-                  }
+                    AIcol = col;
+                    AIrandom = false;
+                }
+
+            }
+          }
+          //Check for 2 matches to the left and right empty
+          //OOOX//
+          if(grid[row][col] == grid[row][col-1])
+          {
+            if(grid[row][col] == grid[row][col-2])
+            {
+                if(grid[row][col+1] == '')
+                {
+                    AIcol = col + 2;
+                    AIrandom = false;
+                }
+
+            }
+          }
+        }
+
+        function checkForWin(row, col, colour) {
+
+          //Check for 4 up
+          //check row height is above third row or index will be out of range
+          if(row > 2)
+          {
+            if(grid[row][col] == grid[row-1][col])
+            {
+              if(grid[row][col] == grid[row-2][col])
+              {
+                if(grid[row][col] == grid[row-3][col])
+                {
+                    winner(colour);
                 }
               }
             }
