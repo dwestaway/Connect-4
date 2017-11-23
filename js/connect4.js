@@ -27,6 +27,8 @@ $(function() { //jquery handler
         canvas = document.getElementById('connect4');
         context = canvas.getContext('2d');
 
+        var AI = true;
+
         //Draw grid, loop through every item in grid array and call calculateCircle
         function refreshGrid() {
           for(row = 0; row < grid.length; row++) {
@@ -99,15 +101,32 @@ $(function() { //jquery handler
                 text.style.color = "yellow";
 
                 drawCircle(getColumnClick(event), 'red');
-                turn = 'yellow';
-          }
-            else
+
+                if(AI == false)
+                {
+                    turn = 'yellow';
+                }
+                else if(AI == true)
+                {
+                    var column;
+
+                    column = Math.floor((Math.random() * 7) + 1);
+
+                    drawCircle(column - 1, 'yellow');
+                }
+
+            }
+            else if(turn == 'yellow')
             {
                 text.innerHTML = "Red Player's Turn";
                 text.style.color = "red";
 
                 drawCircle(getColumnClick(event), 'yellow');
-                turn = 'red';
+
+                if(AI == false)
+                {
+                    turn = 'red';
+                }
             }
 
             refreshGrid();
@@ -121,6 +140,8 @@ $(function() { //jquery handler
             return Math.floor(x / 100); //divide by 100 because canvas is 700x600 and grid is 7x6, then round down
         }
 
+
+
         function checkForWin(row, col, colour) {
 
           //Check for 4 up
@@ -133,8 +154,6 @@ $(function() { //jquery handler
               {
                 if(grid[row][col] == grid[row-3][col])
                 {
-                    //text.innerHTML = winner ' is the winner!';
-
                     winner(colour);
                 }
               }
