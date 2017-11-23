@@ -90,6 +90,8 @@ $(function() { //jquery handler
                         if(colour == 'yellow')
                         {
                             //AIcheckFor3InRow();
+                            AIlastMoveCol = column;
+                            AIlastMoveRow = row;
                         }
                     }
 
@@ -101,10 +103,14 @@ $(function() { //jquery handler
         }
 
         var turn = 'red';
-        var AIrandom = true;
+        var firstMove = true;
+        var counterMove = false;
+        var freeSpace = false;
         var AIcol = 0;
         var playerCol = 0;
         var playerRow = 0;
+        var AIlastMoveCol = 0;
+        var AIlastMoveRow = 0;
 
         //use player location for AI close to winner check
 
@@ -116,38 +122,47 @@ $(function() { //jquery handler
             //swap turns, change text and place circle on each click
             if(turn == 'red')
             {
-                text.innerHTML = "Yellow Player's Turn";
-                text.style.color = "yellow";
-
-                AIrandom = true;
 
                 drawCircle(getColumnClick(event), 'red');
 
                 if(AI == false)
                 {
                     turn = 'yellow';
+                    text.innerHTML = "Yellow Player's Turn";
+                    text.style.color = "yellow";
                 }
                 else if(AI == true)
                 {
                     var column;
 
-                    AIrandom = true;
+                    counterMove = false;
+                    freeSpace = false;
 
                     AIcheckForCounterMove(playerRow,playerCol);
 
-                    //AIcheckForFreeSpace();
-
-                    if(AIrandom == true)
+                    //If no counter moves were round, and not first turn, check for best non counter move
+                    if(counterMove == false && firstMove == false)
                     {
-                        column = 1;
-
-                        //column = Math.floor((Math.random() * 7) + 1);
+                        AIcheckForBestNonCounter(AIlastMoveRow, AIlastMoveCol);
                     }
-                    else if(AIrandom == false)
+
+                    firstMove = false;
+
+
+                    if(counterMove == true)
                     {
                         column = AIcol + 1;
 
-                        alert('countered lol');
+                    }
+                    else if(freeSpace == true)
+                    {
+                        column = AIcol + 1;
+                    }
+                    else
+                    {
+                        //column = 1;
+
+                        column = Math.floor((Math.random() * 7) + 1);
                     }
 
                     drawCircle(column - 1, 'yellow');
@@ -177,129 +192,7 @@ $(function() { //jquery handler
 
             return Math.floor(x / 100); //divide by 100 because canvas is 700x600 and grid is 7x6, then round down
         }
-        function AIcheckForCounterMove(row, col) {
 
-          //Check for 3 up
-          if(row > 1)
-          {
-            if(grid[row][col] == grid[row-1][col])
-            {
-              if(grid[row][col] == grid[row-2][col])
-              {
-                  AIcol = col;
-                  AIrandom = false;
-              }
-            }
-          }
-          //Check for 2 matches to the right and left empty
-          ///V////
-          //XOOO//
-          if(grid[row][col] == grid[row][col+1])
-          {
-            if(grid[row][col] == grid[row][col+2])
-            {
-                if(grid[row][col-1] == '')
-                {
-                    AIcol = col;
-                    AIrandom = false;
-                }
-
-            }
-          }
-          //Check for 2 matches to the left and right empty
-          ////V///
-          //OOOX//
-          if(grid[row][col] == grid[row][col-1])
-          {
-            if(grid[row][col] == grid[row][col-2])
-            {
-                if(grid[row][col+1] == '')
-                {
-                    AIcol = col + 1;
-                    AIrandom = false;
-                }
-
-            }
-          }
-          //V/////
-          //OXOO//
-          if(grid[row][col+1] == '')
-          {
-            if(grid[row][col] == grid[row][col+2])
-            {
-              if(grid[row][col] == grid[row][col+3])
-              {
-                  AIcol = col + 1;
-                  AIrandom = false;
-              }
-            }
-          }
-          ////V///
-          //OXOO//
-          if(grid[row][col-1] == '')
-          {
-            if(grid[row][col] == grid[row][col+1])
-            {
-              if(grid[row][col] == grid[row][col-2])
-              {
-                  AIcol = col - 1;
-                  AIrandom = false;
-              }
-            }
-          }
-          /////V//
-          //OXOO//
-          if(grid[row][col-2] == '')
-          {
-            if(grid[row][col] == grid[row][col-1])
-            {
-              if(grid[row][col] == grid[row][col-3])
-              {
-                  AIcol = col - 2;
-                  AIrandom = false;
-              }
-            }
-          }
-          /////V//
-          //OOXO//
-          if(grid[row][col-1] == '')
-          {
-            if(grid[row][col] == grid[row][col-2])
-            {
-              if(grid[row][col] == grid[row][col-3])
-              {
-                  AIcol = col - 1;
-                  AIrandom = false;
-              }
-            }
-          }
-          ///V////
-          //OOXO//
-          if(grid[row][col+1] == '')
-          {
-            if(grid[row][col] == grid[row][col-1])
-            {
-              if(grid[row][col] == grid[row][col-3])
-              {
-                  AIcol = col + 1;
-                  AIrandom = false;
-              }
-            }
-          }
-          //V/////
-          //OOXO//
-          if(grid[row][col+2] == '')
-          {
-            if(grid[row][col] == grid[row][col+1])
-            {
-              if(grid[row][col] == grid[row][col+3])
-              {
-                  AIcol = col + 2;
-                  AIrandom = false;
-              }
-            }
-          }
-        }
 
         function checkForWin(row, col, colour) {
 
@@ -550,6 +443,229 @@ $(function() { //jquery handler
 
             text.innerHTML = winner + ' is the winner!';
             text.style.color = colour;
+        }
+
+        //AI checks for player having 3 in a row to block it
+        function AIcheckForCounterMove(row, col) {
+
+          //Check for 3 up
+          if(row > 1)
+          {
+            if(grid[row][col] == grid[row-1][col])
+            {
+              if(grid[row][col] == grid[row-2][col])
+              {
+                  AIcol = col;
+                  counterMove = true;
+                  return true;
+              }
+            }
+          }
+          //Check for 2 matches to the right and left empty
+          ///V////
+          //XOOO//
+          if(grid[row][col] == grid[row][col+1])
+          {
+            if(grid[row][col] == grid[row][col+2])
+            {
+                if(grid[row][col-1] == '')
+                {
+                    AIcol = col - 1;
+                    counterMove = true;
+                    return true;
+                }
+
+            }
+          }
+          /////V//
+          //XOOO//
+          if(grid[row][col] == grid[row][col-1])
+          {
+            if(grid[row][col] == grid[row][col-2])
+            {
+                if(grid[row][col-3] == '')
+                {
+                    AIcol = col - 3;
+                    counterMove = true;
+                    return true;
+                }
+
+            }
+          }
+          //Check for 2 matches to the left and right empty
+          ////V///
+          //OOOX//
+          if(grid[row][col] == grid[row][col-1])
+          {
+            if(grid[row][col] == grid[row][col-2])
+            {
+                if(grid[row][col+1] == '')
+                {
+                    AIcol = col + 1;
+                    counterMove = true;
+                    return true;
+                }
+
+            }
+          }
+          //V/////
+          //OOOX//
+          if(grid[row][col] == grid[row][col+1])
+          {
+            if(grid[row][col] == grid[row][col+2])
+            {
+                if(grid[row][col+3] == '')
+                {
+                    AIcol = col + 3;
+                    counterMove = true;
+                    return true;
+                }
+
+            }
+          }
+          ////V////
+          //XOOOX//
+          if((grid[row][col+2] == '') || (grid[row][col-2] == ''))
+          {
+            if(grid[row][col] == grid[row][col-1])
+            {
+                if(grid[row][col] == grid[row][col+1])
+                {
+                    AIcol = col - 2;
+                    counterMove = true;
+                    return true;
+                }
+
+            }
+          }
+          //V/////
+          //OXOO//
+          if(grid[row][col+1] == '')
+          {
+            if(grid[row][col] == grid[row][col+2])
+            {
+              if(grid[row][col] == grid[row][col+3])
+              {
+                  AIcol = col + 1;
+                  counterMove = true;
+                  return true;
+              }
+            }
+          }
+          ////V///
+          //OXOO//
+          if(grid[row][col-1] == '')
+          {
+            if(grid[row][col] == grid[row][col+1])
+            {
+              if(grid[row][col] == grid[row][col-2])
+              {
+                  AIcol = col - 1;
+                  counterMove = true;
+                  return true;
+              }
+            }
+          }
+          /////V//
+          //OXOO//
+          if(grid[row][col-2] == '')
+          {
+            if(grid[row][col] == grid[row][col-1])
+            {
+              if(grid[row][col] == grid[row][col-3])
+              {
+                  AIcol = col - 2;
+                  counterMove = true;
+                  return true;
+              }
+            }
+          }
+          /////V//
+          //OOXO//
+          if(grid[row][col-1] == '')
+          {
+            if(grid[row][col] == grid[row][col-2])
+            {
+              if(grid[row][col] == grid[row][col-3])
+              {
+                  AIcol = col - 1;
+                  counterMove = true;
+                  return true;
+              }
+            }
+          }
+          ///V////
+          //OOXO//
+          if(grid[row][col+1] == '')
+          {
+            if(grid[row][col] == grid[row][col-1])
+            {
+              if(grid[row][col] == grid[row][col-3])
+              {
+                  AIcol = col + 1;
+                  counterMove = true;
+                  return true;
+              }
+            }
+          }
+          //V/////
+          //OOXO//
+          if(grid[row][col+2] == '')
+          {
+            if(grid[row][col] == grid[row][col+1])
+            {
+              if(grid[row][col] == grid[row][col+3])
+              {
+                  AIcol = col + 2;
+                  counterMove = true;
+                  return true;
+              }
+            }
+          }
+
+          /////////////////
+          //Diagonal checks
+          /////////////////
+
+          //checkForDiagonal()
+
+          return false;
+        }
+
+        function AIcheckForBestNonCounter(row, col)
+        {
+           if(grid[row+1][col] == '')
+           {
+              AIcol = col;
+              freeSpace = true;
+              return true;
+           }
+           else if(grid[row][col-1] == '')
+           {
+              AIcol = col - 1;
+              freeSpace = true;
+              return true;
+           }
+           else if(grid[row][col+1] == '')
+           {
+              AIcol = col + 1;
+              freeSpace = true;
+              return true;
+           }
+           else if(grid[row+1][col-1] == '')
+           {
+              AIcol = col - 1;
+              freeSpace = true;
+              return true;
+           }
+           else if(grid[row+1][col+1] == '')
+           {
+              AIcol = col + 1;
+              freeSpace = true;
+              return true;
+           }
+
+           return false;
         }
 
 
