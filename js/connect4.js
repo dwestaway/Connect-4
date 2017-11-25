@@ -115,7 +115,6 @@ $(function() { //jquery handler
             //swap turns, change text and place circle on each click
             if(turn == 'red')
             {
-
                 if(AI == false)
                 {
 
@@ -131,20 +130,21 @@ $(function() { //jquery handler
 
                     var column;
 
-                    counterMove = false;
+                    bestMove = false;
                     freeSpace = false;
 
-                    AIfindBestMove('red');
-                    AIfindBestMove('yellow');
+                    AIcol = 0;
 
-                    //If no best moves were round, and not first turn, check for best non counter move
+                    AIfindBestMove('red'); //check if player is 1 from a 4 in a row
+                    AIfindBestMove('yellow'); //check if AI is 1 from a 4 in a row, this will favor over the above
+
+                    //If no best moves were round, and not first turn, check for next best move
                     if(bestMove == false && firstMove == false)
                     {
-                        AIcheckForBestNonCounter(AIlastMoveRow, AIlastMoveCol);
+                        AIfindNextBestMove(AIlastMoveRow, AIlastMoveCol);
                     }
 
                     firstMove = false;
-
 
                     if(bestMove == true)
                     {
@@ -203,12 +203,19 @@ $(function() { //jquery handler
                 if(columnFull == false)
                 {
                   //Check for 3 up
-                  if(row > 2)
+                  if(row > 1 && row < 4)
                   {
-                    if(grid[row-1][col] == colour && grid[row-2][col] == colour && grid[row-3][col] == colour)
+                    //check for 2 upwards, replace AIcol if there is 3 upwards
+                    if(grid[row-1][col] == colour && grid[row-2][col] == colour)
                     {
+                      AIcol = col;
+                      bestMove = true;
+
+                      if(row > 2 && grid[row-3][col] == colour)
+                      {
                         AIcol = col;
                         bestMove = true;
+                      }
                     }
                   }
                   //Check for 3 to the right
@@ -334,6 +341,8 @@ $(function() { //jquery handler
                     }
                   }
                 }
+
+                console.log(AIcol);
             }
 
         }
@@ -604,7 +613,7 @@ $(function() { //jquery handler
             text.style.color = colour;
         }
 
-        function AIcheckForBestNonCounter(row, col)
+        function AIfindNextBestMove(row, col)
         {
            if(grid[row+1][col] == '')
            {
@@ -631,6 +640,18 @@ $(function() { //jquery handler
               return true;
            }
            else if(grid[row+1][col+1] == '')
+           {
+              AIcol = col + 1;
+              freeSpace = true;
+              return true;
+           }
+           else if(grid[row-1][col+1] == '')
+           {
+              AIcol = col + 1;
+              freeSpace = true;
+              return true;
+           }
+           else if(grid[row-1][col-1] == '')
            {
               AIcol = col + 1;
               freeSpace = true;
