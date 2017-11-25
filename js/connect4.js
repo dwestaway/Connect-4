@@ -82,14 +82,8 @@ $(function() { //jquery handler
 
                     if(AI == true)
                     {
-                        if(colour == 'red')
-                        {
-                            playerCol = column;
-                            playerRow = row;
-                        }
                         if(colour == 'yellow')
                         {
-                            //AIcheckFor3InRow();
                             AIlastMoveCol = column;
                             AIlastMoveRow = row;
                         }
@@ -104,11 +98,10 @@ $(function() { //jquery handler
 
         var turn = 'red';
         var firstMove = true;
-        var counterMove = false;
+        var bestMove = false;
         var freeSpace = false;
+        var columnFull = false;
         var AIcol = 0;
-        var playerCol = 0;
-        var playerRow = 0;
         var AIlastMoveCol = 0;
         var AIlastMoveRow = 0;
 
@@ -142,11 +135,10 @@ $(function() { //jquery handler
                     freeSpace = false;
 
                     AIfindBestMove('red');
+                    AIfindBestMove('yellow');
 
-                    //AIcheckForCounterMove(playerRow,playerCol);
-
-                    //If no counter moves were round, and not first turn, check for best non counter move
-                    if(counterMove == false && firstMove == false)
+                    //If no best moves were round, and not first turn, check for best non counter move
+                    if(bestMove == false && firstMove == false)
                     {
                         AIcheckForBestNonCounter(AIlastMoveRow, AIlastMoveCol);
                     }
@@ -154,7 +146,7 @@ $(function() { //jquery handler
                     firstMove = false;
 
 
-                    if(counterMove == true)
+                    if(bestMove == true)
                     {
                         column = AIcol + 1;
 
@@ -166,7 +158,7 @@ $(function() { //jquery handler
                     else
                     {
                         //column = 1;
-
+                        //This only happens on first turn and if no space near previous turn
                         column = Math.floor((Math.random() * 7) + 1);
                     }
 
@@ -204,15 +196,19 @@ $(function() { //jquery handler
             //loop through all columns
             for(var col = 0; col < 7; col++)
             {
+                columnFull = false;
+
                 row = getFirstEmpty(col);
 
+                if(columnFull == false)
+                {
                   //Check for 3 up
                   if(row > 2)
                   {
                     if(grid[row-1][col] == colour && grid[row-2][col] == colour && grid[row-3][col] == colour)
                     {
                         AIcol = col;
-                        counterMove = true;
+                        bestMove = true;
                     }
                   }
                   //Check for 3 to the right
@@ -220,29 +216,124 @@ $(function() { //jquery handler
                   if(grid[row][col+1] == colour && grid[row][col+2] == colour && grid[row][col+3] == colour)
                   {
                       AIcol = col;
-                      counterMove = true;
+                      bestMove = true;
                   }
                   //Check for 3 to the left
                   //OOOX//
                   if(grid[row][col-1] == colour && grid[row][col-2] == colour && grid[row][col-3] == colour)
                   {
                       AIcol = col;
-                      counterMove = true;
+                      bestMove = true;
                   }
                   //OOXO//
                   if(grid[row][col+1] == colour && grid[row][col-1] == colour && grid[row][col-2] == colour)
                   {
                       AIcol = col;
-                      counterMove = true;
+                      bestMove = true;
                   }
                   //OXOO//
                   if(grid[row][col-1] == colour && grid[row][col+1] == colour && grid[row][col+2] == colour)
                   {
                       AIcol = col;
-                      counterMove = true;
+                      bestMove = true;
                   }
-
-
+                  /////O//
+                  ////O///
+                  ///O////
+                  //X/////
+                  if (row < 3)
+                  {
+                    if(grid[row+1][col+1] == colour && grid[row+2][col+2] == colour && grid[row+3][col+3] == colour)
+                    {
+                        AIcol = col;
+                        bestMove = true;
+                    }
+                  }
+                  /////X//
+                  ////O///
+                  ///O////
+                  //O/////
+                  if (row > 2)
+                  {
+                    if(grid[row-1][col-1] == colour && grid[row-2][col-2] == colour && grid[row-3][col-3] == colour)
+                    {
+                        AIcol = col;
+                        bestMove = true;
+                    }
+                  }
+                  //O/////
+                  ///O////
+                  ////O///
+                  /////X//
+                  if (row < 3)
+                  {
+                    if(grid[row+1][col-1] == colour && grid[row+2][col-2] == colour && grid[row+3][col-3] == colour)
+                    {
+                        AIcol = col;
+                        bestMove = true;
+                    }
+                  }
+                  //X/////
+                  ///O////
+                  ////O///
+                  /////O//
+                  if (row > 2)
+                  {
+                    if(grid[row-1][col+1] == colour && grid[row-2][col+2] == colour && grid[row-3][col+3] == colour)
+                    {
+                        AIcol = col;
+                        bestMove = true;
+                    }
+                  }
+                  /////O//
+                  ////O///
+                  ///X////
+                  //O/////
+                  if(row > 0 && row < 4)
+                  {
+                    if(grid[row-1][col-1] == colour && grid[row+1][col+1] == colour && grid[row+2][col+2] == colour)
+                    {
+                        AIcol = col;
+                        counterMove = true;
+                    }
+                  }
+                  /////O//
+                  ////X///
+                  ///O////
+                  //O/////
+                  if(row > 1 && row < 5)
+                  {
+                    if(grid[row-1][col-1] == colour && grid[row-2][col-2] == colour && grid[row+1][col+1] == colour)
+                    {
+                        AIcol = col;
+                        counterMove = true;
+                    }
+                  }
+                  //O/////
+                  ///O////
+                  ////X///
+                  /////O//
+                  if(row > 0 && row < 4)
+                  {
+                    if(grid[row-1][col+1] == colour && grid[row+1][col-1] == colour && grid[row+2][col-2] == colour)
+                    {
+                        AIcol = col;
+                        counterMove = true;
+                    }
+                  }
+                  //O/////
+                  ///X////
+                  ////O///
+                  /////O//
+                  if(row > 1 && row < 5)
+                  {
+                    if(grid[row-1][col+1] == colour && grid[row-2][col+2] == colour && grid[row+1][col-1] == colour)
+                    {
+                        AIcol = col;
+                        counterMove = true;
+                    }
+                  }
+                }
             }
 
         }
@@ -257,6 +348,8 @@ $(function() { //jquery handler
                     return row;
                 }
             }
+            columnFull = true;
+
             return false;
         }
 
