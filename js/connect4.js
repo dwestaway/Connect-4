@@ -157,6 +157,7 @@ $(function() { //jquery handler
                     }
                     else
                     {
+                        //console.log('random');
                         //column = 1;
                         //This only happens on first turn and if no space near previous turn
                         column = Math.floor((Math.random() * 7) + 1);
@@ -200,16 +201,17 @@ $(function() { //jquery handler
 
                 row = getFirstEmpty(col);
 
-                if(columnFull == false)
+                //if a best move is found, do not continue searching
+                if(columnFull == false && bestMove == false)
                 {
                   //Check for 3 up
-                  if(row > 1 && row < 4)
+                  if(row > 1)
                   {
                     //check for 2 upwards, replace AIcol if there is 3 upwards
                     if(grid[row-1][col] == colour && grid[row-2][col] == colour)
                     {
-                      AIcol = col;
-                      bestMove = true;
+                      //AIcol = col;
+                      //bestMove = true;
 
                       if(row > 2 && grid[row-3][col] == colour)
                       {
@@ -341,10 +343,7 @@ $(function() { //jquery handler
                     }
                   }
                 }
-
-                console.log(AIcol);
             }
-
         }
 
         //find first empty row in the column
@@ -613,9 +612,11 @@ $(function() { //jquery handler
             text.style.color = colour;
         }
 
+        //Check for free spaces next to the previous move
         function AIfindNextBestMove(row, col)
         {
-           if(grid[row+1][col] == '')
+           //Check if row is less than 3 to avoid going upwards when only space for 3
+           if(row < 3 && grid[row+1][col] == '')
            {
               AIcol = col;
               freeSpace = true;
