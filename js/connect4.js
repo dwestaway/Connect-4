@@ -123,22 +123,27 @@ $(function() { //jquery handler
             if(turn == 'red')
             {
 
-                drawCircle(getColumnClick(event), 'red');
-
                 if(AI == false)
                 {
-                    turn = 'yellow';
+
                     text.innerHTML = "Yellow Player's Turn";
                     text.style.color = "yellow";
+                    turn = 'yellow';
+
+                    drawCircle(getColumnClick(event), 'red');
                 }
                 else if(AI == true)
                 {
+                    drawCircle(getColumnClick(event), 'red');
+
                     var column;
 
                     counterMove = false;
                     freeSpace = false;
 
-                    AIcheckForCounterMove(playerRow,playerCol);
+                    AIfindBestMove('red');
+
+                    //AIcheckForCounterMove(playerRow,playerCol);
 
                     //If no counter moves were round, and not first turn, check for best non counter move
                     if(counterMove == false && firstMove == false)
@@ -192,7 +197,68 @@ $(function() { //jquery handler
 
             return Math.floor(x / 100); //divide by 100 because canvas is 700x600 and grid is 7x6, then round down
         }
+        function AIfindBestMove(colour) {
 
+            var row;
+
+            //loop through all columns
+            for(var col = 0; col < 7; col++)
+            {
+                row = getFirstEmpty(col);
+
+                  //Check for 3 up
+                  if(row > 2)
+                  {
+                    if(grid[row-1][col] == colour && grid[row-2][col] == colour && grid[row-3][col] == colour)
+                    {
+                        AIcol = col;
+                        counterMove = true;
+                    }
+                  }
+                  //Check for 3 to the right
+                  //XOOO//
+                  if(grid[row][col+1] == colour && grid[row][col+2] == colour && grid[row][col+3] == colour)
+                  {
+                      AIcol = col;
+                      counterMove = true;
+                  }
+                  //Check for 3 to the left
+                  //OOOX//
+                  if(grid[row][col-1] == colour && grid[row][col-2] == colour && grid[row][col-3] == colour)
+                  {
+                      AIcol = col;
+                      counterMove = true;
+                  }
+                  //OOXO//
+                  if(grid[row][col+1] == colour && grid[row][col-1] == colour && grid[row][col-2] == colour)
+                  {
+                      AIcol = col;
+                      counterMove = true;
+                  }
+                  //OXOO//
+                  if(grid[row][col-1] == colour && grid[row][col+1] == colour && grid[row][col+2] == colour)
+                  {
+                      AIcol = col;
+                      counterMove = true;
+                  }
+
+
+            }
+
+        }
+
+        //find first empty row in the column
+        function getFirstEmpty(column)
+        {
+            for (var row = 0; row < grid.length; row++)
+            {
+                if(grid[row][column] == '')
+                {
+                    return row;
+                }
+            }
+            return false;
+        }
 
         function checkForWin(row, col, colour) {
 
@@ -443,193 +509,6 @@ $(function() { //jquery handler
 
             text.innerHTML = winner + ' is the winner!';
             text.style.color = colour;
-        }
-
-        //AI checks for player having 3 in a row to block it
-        function AIcheckForCounterMove(row, col) {
-
-          //Check for 3 up
-          if(row > 1)
-          {
-            if(grid[row][col] == grid[row-1][col])
-            {
-              if(grid[row][col] == grid[row-2][col])
-              {
-                  AIcol = col;
-                  counterMove = true;
-                  return true;
-              }
-            }
-          }
-          //Check for 2 matches to the right and left empty
-          ///V////
-          //XOOO//
-          if(grid[row][col] == grid[row][col+1])
-          {
-            if(grid[row][col] == grid[row][col+2])
-            {
-                if(grid[row][col-1] == '')
-                {
-                    AIcol = col - 1;
-                    counterMove = true;
-                    return true;
-                }
-
-            }
-          }
-          /////V//
-          //XOOO//
-          if(grid[row][col] == grid[row][col-1])
-          {
-            if(grid[row][col] == grid[row][col-2])
-            {
-                if(grid[row][col-3] == '')
-                {
-                    AIcol = col - 3;
-                    counterMove = true;
-                    return true;
-                }
-
-            }
-          }
-          //Check for 2 matches to the left and right empty
-          ////V///
-          //OOOX//
-          if(grid[row][col] == grid[row][col-1])
-          {
-            if(grid[row][col] == grid[row][col-2])
-            {
-                if(grid[row][col+1] == '')
-                {
-                    AIcol = col + 1;
-                    counterMove = true;
-                    return true;
-                }
-
-            }
-          }
-          //V/////
-          //OOOX//
-          if(grid[row][col] == grid[row][col+1])
-          {
-            if(grid[row][col] == grid[row][col+2])
-            {
-                if(grid[row][col+3] == '')
-                {
-                    AIcol = col + 3;
-                    counterMove = true;
-                    return true;
-                }
-
-            }
-          }
-          ////V////
-          //XOOOX//
-          if((grid[row][col+2] == '') || (grid[row][col-2] == ''))
-          {
-            if(grid[row][col] == grid[row][col-1])
-            {
-                if(grid[row][col] == grid[row][col+1])
-                {
-                    AIcol = col - 2;
-                    counterMove = true;
-                    return true;
-                }
-
-            }
-          }
-          //V/////
-          //OXOO//
-          if(grid[row][col+1] == '')
-          {
-            if(grid[row][col] == grid[row][col+2])
-            {
-              if(grid[row][col] == grid[row][col+3])
-              {
-                  AIcol = col + 1;
-                  counterMove = true;
-                  return true;
-              }
-            }
-          }
-          ////V///
-          //OXOO//
-          if(grid[row][col-1] == '')
-          {
-            if(grid[row][col] == grid[row][col+1])
-            {
-              if(grid[row][col] == grid[row][col-2])
-              {
-                  AIcol = col - 1;
-                  counterMove = true;
-                  return true;
-              }
-            }
-          }
-          /////V//
-          //OXOO//
-          if(grid[row][col-2] == '')
-          {
-            if(grid[row][col] == grid[row][col-1])
-            {
-              if(grid[row][col] == grid[row][col-3])
-              {
-                  AIcol = col - 2;
-                  counterMove = true;
-                  return true;
-              }
-            }
-          }
-          /////V//
-          //OOXO//
-          if(grid[row][col-1] == '')
-          {
-            if(grid[row][col] == grid[row][col-2])
-            {
-              if(grid[row][col] == grid[row][col-3])
-              {
-                  AIcol = col - 1;
-                  counterMove = true;
-                  return true;
-              }
-            }
-          }
-          ///V////
-          //OOXO//
-          if(grid[row][col+1] == '')
-          {
-            if(grid[row][col] == grid[row][col-1])
-            {
-              if(grid[row][col] == grid[row][col-3])
-              {
-                  AIcol = col + 1;
-                  counterMove = true;
-                  return true;
-              }
-            }
-          }
-          //V/////
-          //OOXO//
-          if(grid[row][col+2] == '')
-          {
-            if(grid[row][col] == grid[row][col+1])
-            {
-              if(grid[row][col] == grid[row][col+3])
-              {
-                  AIcol = col + 2;
-                  counterMove = true;
-                  return true;
-              }
-            }
-          }
-
-          /////////////////
-          //Diagonal checks
-          /////////////////
-
-          //checkForDiagonal()
-
-          return false;
         }
 
         function AIcheckForBestNonCounter(row, col)
