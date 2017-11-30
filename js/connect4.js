@@ -34,6 +34,21 @@
             }
           }
         }
+        function resetGrid() {
+          for(row = 0; row < grid.length; row++) {
+            for(col = 0; col < grid[row].length; col++) {
+                //set all contents of grid array to blank
+                grid[row][col] = '';
+            }
+          }
+          //make sure game starts on red players turn after reset
+          turn = 'red';
+
+          //reset gameOver state
+          gameOver = false;
+
+          refreshGrid();
+        }
 
         //Calculate the row and column into exact coordinates on canvas
         function calculateCircle(col, row, name) {
@@ -108,6 +123,8 @@
         var winningMove = false;
 
         text = document.getElementById('text');
+
+
 
 
         //Mouse click listener
@@ -701,9 +718,11 @@
 
         buttonPVP.onclick = function() {
             ai = false;
+            resetGrid();
         };
         buttonAI.onclick = function() {
             ai = true;
+            resetGrid();
         };
 
         //qunit practice
