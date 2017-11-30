@@ -1,4 +1,3 @@
-$(function() { //jquery handler
 
         //circle object
         var circle = {
@@ -27,7 +26,7 @@ $(function() { //jquery handler
         canvas = document.getElementById('connect4');
         context = canvas.getContext('2d');
 
-        var AI = true;
+        var ai = true;
 
         //Draw grid, loop through every item in grid array and call calculateCircle
         function refreshGrid() {
@@ -52,6 +51,7 @@ $(function() { //jquery handler
           {
               createCircle(centerX, centerY, circle.yellow.colour);
           }
+          //if no name is specificied, for example if it is blank, fill with white circle, this is done for all empty circles
           else
           {
               createCircle(centerX, centerY, 'white');
@@ -80,7 +80,7 @@ $(function() { //jquery handler
 
                     checkForWin(row, column, colour);
 
-                    if(AI == true)
+                    if(ai == true)
                     {
                         if(colour == 'yellow')
                         {
@@ -104,18 +104,21 @@ $(function() { //jquery handler
         var AIcol = 0;
         var AIlastMoveCol = 0;
         var AIlastMoveRow = 0;
+        var gameOver = false;
 
-        //use player location for AI close to winner check
+        text = document.getElementById('text');
+
 
         //Mouse click listener
         canvas.addEventListener('click', function(evt) {
 
-            text = document.getElementById('text');
+            if(gameOver == false)
+            {
 
             //swap turns, change text and place circle on each click
             if(turn == 'red')
             {
-                if(AI == false)
+                if(ai == false)
                 {
 
                     text.innerHTML = "Yellow Player's Turn";
@@ -124,46 +127,49 @@ $(function() { //jquery handler
 
                     drawCircle(getColumnClick(event), 'red');
                 }
-                else if(AI == true)
+                else if(ai == true)
                 {
                     drawCircle(getColumnClick(event), 'red');
 
-                    var column;
-
-                    bestMove = false;
-                    freeSpace = false;
-
-                    AIcol = 0;
-
-                    AIfindBestMove('red'); //check if player is 1 from a 4 in a row
-                    AIfindBestMove('yellow'); //check if AI is 1 from a 4 in a row, this will favor over the above
-
-                    //If no best moves were round, and not first turn, check for next best move
-                    if(bestMove == false && firstMove == false)
+                    if(gameOver != true)
                     {
-                        AIfindNextBestMove(AIlastMoveRow, AIlastMoveCol);
-                    }
+                        var column;
 
-                    firstMove = false;
+                        bestMove = false;
+                        freeSpace = false;
 
-                    if(bestMove == true)
-                    {
-                        column = AIcol + 1;
+                        AIcol = 0;
 
-                    }
-                    else if(freeSpace == true)
-                    {
-                        column = AIcol + 1;
-                    }
-                    else
-                    {
-                        //console.log('random');
-                        //column = 1;
-                        //This only happens on first turn and if no space near previous turn
-                        column = Math.floor((Math.random() * 7) + 1);
-                    }
+                        AIfindBestMove('red'); //check if player is 1 from a 4 in a row
+                        AIfindBestMove('yellow'); //check if AI is 1 from a 4 in a row, this will favor over the above
+
+                        //If no best moves were round, and not first turn, check for next best move
+                        if(bestMove == false && firstMove == false)
+                        {
+                          AIfindNextBestMove(AIlastMoveRow, AIlastMoveCol);
+                        }
+
+                        firstMove = false;
+
+                        if(bestMove == true)
+                        {
+                            column = AIcol + 1;
+                        }
+                        else if(freeSpace == true)
+                        {
+                            column = AIcol + 1;
+                        }
+                        else
+                        {
+                            //console.log('random');
+                            //column = 1;
+                            //This only happens on first turn and if no space near previous turn
+                            column = Math.floor((Math.random() * 7) + 1);
+                        }
 
                     drawCircle(column - 1, 'yellow');
+
+                    }
                 }
 
             }
@@ -174,13 +180,16 @@ $(function() { //jquery handler
 
                 drawCircle(getColumnClick(event), 'yellow');
 
-                if(AI == false)
+                if(ai == false)
                 {
                     turn = 'red';
                 }
             }
 
+
             refreshGrid();
+
+            }
         });
 
         //Find out which column is clicked
@@ -610,6 +619,8 @@ $(function() { //jquery handler
 
             text.innerHTML = winner + ' is the winner!';
             text.style.color = colour;
+
+            gameOver = true;
         }
 
         //Check for free spaces next to the previous move
@@ -662,10 +673,10 @@ $(function() { //jquery handler
            return false;
         }
 
-
+        //qunit practice
+        function sum(a,b)
+        {
+          return a+b;
+        }
 
         refreshGrid();
-
-
-
-} (jQuery));
