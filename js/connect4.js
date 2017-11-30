@@ -26,8 +26,6 @@
         canvas = document.getElementById('connect4');
         context = canvas.getContext('2d');
 
-        var ai = true;
-
         //Draw grid, loop through every item in grid array and call calculateCircle
         function refreshGrid() {
           for(row = 0; row < grid.length; row++) {
@@ -96,6 +94,8 @@
 
         }
 
+        var ai = false;
+
         var turn = 'red';
         var firstMove = true;
         var bestMove = false;
@@ -105,6 +105,7 @@
         var AIlastMoveCol = 0;
         var AIlastMoveRow = 0;
         var gameOver = false;
+        var winningMove = false;
 
         text = document.getElementById('text');
 
@@ -121,8 +122,10 @@
                 if(ai == false)
                 {
 
+                    //change text to allow players to see whos turn it is
                     text.innerHTML = "Yellow Player's Turn";
                     text.style.color = "yellow";
+
                     turn = 'yellow';
 
                     drawCircle(getColumnClick(event), 'red');
@@ -137,11 +140,18 @@
 
                         bestMove = false;
                         freeSpace = false;
+                        winningMove = false;
 
                         AIcol = 0;
 
-                        AIfindBestMove('red'); //check if player is 1 from a 4 in a row
                         AIfindBestMove('yellow'); //check if AI is 1 from a 4 in a row, this will favor over the above
+
+                        //check if no winning move is found, look for counter move
+                        if(winningMove == false)
+                        {
+                            AIfindBestMove('red'); //check if player is 1 from a 4 in a row
+                        }
+
 
                         //If no best moves were round, and not first turn, check for next best move
                         if(bestMove == false && firstMove == false)
@@ -226,6 +236,7 @@
                       {
                         AIcol = col;
                         bestMove = true;
+                        winningMove == true;
                       }
                     }
                   }
@@ -235,6 +246,7 @@
                   {
                       AIcol = col;
                       bestMove = true;
+                      winningMove == true;
                   }
                   //Check for 3 to the left
                   //OOOX//
@@ -242,18 +254,21 @@
                   {
                       AIcol = col;
                       bestMove = true;
+                      winningMove == true;
                   }
                   //OOXO//
                   if(grid[row][col+1] == colour && grid[row][col-1] == colour && grid[row][col-2] == colour)
                   {
                       AIcol = col;
                       bestMove = true;
+                      winningMove == true;
                   }
                   //OXOO//
                   if(grid[row][col-1] == colour && grid[row][col+1] == colour && grid[row][col+2] == colour)
                   {
                       AIcol = col;
                       bestMove = true;
+                      winningMove == true;
                   }
                   /////O//
                   ////O///
@@ -265,6 +280,7 @@
                     {
                         AIcol = col;
                         bestMove = true;
+                        winningMove == true;
                     }
                   }
                   /////X//
@@ -277,6 +293,7 @@
                     {
                         AIcol = col;
                         bestMove = true;
+                        winningMove == true;
                     }
                   }
                   //O/////
@@ -289,6 +306,7 @@
                     {
                         AIcol = col;
                         bestMove = true;
+                        winningMove == true;
                     }
                   }
                   //X/////
@@ -301,6 +319,7 @@
                     {
                         AIcol = col;
                         bestMove = true;
+                        winningMove == true;
                     }
                   }
                   /////O//
@@ -313,6 +332,7 @@
                     {
                         AIcol = col;
                         counterMove = true;
+                        winningMove == true;
                     }
                   }
                   /////O//
@@ -325,6 +345,7 @@
                     {
                         AIcol = col;
                         counterMove = true;
+                        winningMove == true;
                     }
                   }
                   //O/////
@@ -337,6 +358,7 @@
                     {
                         AIcol = col;
                         counterMove = true;
+                        winningMove == true;
                     }
                   }
                   //O/////
@@ -349,6 +371,7 @@
                     {
                         AIcol = col;
                         counterMove = true;
+                        winningMove == true;
                     }
                   }
                 }
@@ -657,13 +680,13 @@
               freeSpace = true;
               return true;
            }
-           else if(grid[row-1][col+1] == '' )
+           else if(row > 0 && grid[row-1][col+1] == '')
            {
               AIcol = col + 1;
               freeSpace = true;
               return true;
            }
-           else if(grid[row-1][col-1] == '')
+           else if(row > 0 && grid[row-1][col-1] == '')
            {
               AIcol = col + 1;
               freeSpace = true;
@@ -672,6 +695,16 @@
 
            return false;
         }
+
+        var buttonPVP = document.getElementById("pvpButton");
+        var buttonAI = document.getElementById("aiButton");
+
+        buttonPVP.onclick = function() {
+            ai = false;
+        };
+        buttonAI.onclick = function() {
+            ai = true;
+        };
 
         //qunit practice
         function sum(a,b)
