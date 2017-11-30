@@ -622,31 +622,31 @@ $(function() { //jquery handler
               freeSpace = true;
               return true;
            }
-           else if(grid[row][col-1] == '')
+           else if(grid[row][col-1] == '' && grid[row-1][col-1] != '')
            {
               AIcol = col - 1;
               freeSpace = true;
               return true;
            }
-           else if(grid[row][col+1] == '')
+           else if(grid[row][col+1] == '' && grid[row-1][col+1] != '')
            {
               AIcol = col + 1;
               freeSpace = true;
               return true;
            }
-           else if(grid[row+1][col-1] == '')
+           else if(grid[row+1][col-1] == '' && grid[row][col-1] != '')
            {
               AIcol = col - 1;
               freeSpace = true;
               return true;
            }
-           else if(grid[row+1][col+1] == '')
+           else if(grid[row+1][col+1] == '' && grid[row][col+1] != '')
            {
               AIcol = col + 1;
               freeSpace = true;
               return true;
            }
-           else if(grid[row-1][col+1] == '')
+           else if(grid[row-1][col+1] == '' )
            {
               AIcol = col + 1;
               freeSpace = true;
