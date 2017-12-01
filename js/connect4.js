@@ -160,6 +160,10 @@
                         //change players turn to yellow
                         turn = 'yellow';
                     }
+                    else if(columnFull == true)
+                    {
+                       text.innerHTML = "Column is Full"
+                    }
 
                 }
                 else if(ai == true)
@@ -185,7 +189,7 @@
                             //If no best moves were round, and not first turn, check for next best move
                             if(bestMove == false && firstMove == false)
                             {
-                              AIfindNextBestMove(AIlastMoveRow, AIlastMoveCol);
+                                AIfindNextBestMove(AIlastMoveRow, AIlastMoveCol);
                             }
 
                             firstMove = false;
@@ -206,11 +210,23 @@
                                 column = Math.floor((Math.random() * 7) + 1);
                             }
 
+                        text.innerHTML = "Red Player's Turn";
+
                         drawCircle(column - 1, 'yellow');
+
+
 
                         }
                     }
+                    else if(columnFull == true)
+                    {
+                        text.innerHTML = "Column is Full"
+                    }
+
+
+
                 }
+
             }
             else if(turn == 'yellow')
             {
@@ -225,6 +241,10 @@
                     text.innerHTML = "Red Player's Turn";
                     text.style.color = "red";
                     turn = 'red';
+                }
+                else if(columnFull == true)
+                {
+                    text.innerHTML = "Column is Full"
                 }
             }
             refreshGrid();
