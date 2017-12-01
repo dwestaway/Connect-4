@@ -41,11 +41,19 @@
                 grid[row][col] = '';
             }
           }
+          resetGame();
+        }
+
+        function resetGame() {
           //make sure game starts on red players turn after reset
           turn = 'red';
 
           //reset gameOver state
           gameOver = false;
+          firstMove = true;
+
+          text.innerHTML = "Red Player's Turn";
+          text.style.color = "red";
 
           refreshGrid();
         }
@@ -116,16 +124,12 @@
         var bestMove = false;
         var freeSpace = false;
         var columnFull = false;
-        var AIcol = 0;
+        var aiCol = 0;
         var AIlastMoveCol = 0;
         var AIlastMoveRow = 0;
         var gameOver = false;
-        var winningMove = false;
 
         text = document.getElementById('text');
-
-
-
 
         //Mouse click listener
         canvas.addEventListener('click', function(evt) {
@@ -157,18 +161,10 @@
 
                         bestMove = false;
                         freeSpace = false;
-                        winningMove = false;
-
-                        AIcol = 0;
+                        aiCol = 0;
 
                         AIfindBestMove('yellow'); //check if AI is 1 from a 4 in a row, this will favor over the above
-
-                        //check if no winning move is found, look for counter move
-                        if(winningMove == false)
-                        {
-                            AIfindBestMove('red'); //check if player is 1 from a 4 in a row
-                        }
-
+                        AIfindBestMove('red'); //check if player is 1 from a 4 in a row
 
                         //If no best moves were round, and not first turn, check for next best move
                         if(bestMove == false && firstMove == false)
@@ -180,11 +176,11 @@
 
                         if(bestMove == true)
                         {
-                            column = AIcol + 1;
+                            column = aiCol + 1;
                         }
                         else if(freeSpace == true)
                         {
-                            column = AIcol + 1;
+                            column = aiCol + 1;
                         }
                         else
                         {
@@ -238,22 +234,21 @@
                 row = getFirstEmpty(col);
 
                 //if a best move is found, do not continue searching
-                if(columnFull == false && bestMove == false)
+                if(columnFull == false)
                 {
                   //Check for 3 up
                   if(row > 1)
                   {
-                    //check for 2 upwards, replace AIcol if there is 3 upwards
+                    //check for 2 upwards, replace aiCol if there is 3 upwards
                     if(grid[row-1][col] == colour && grid[row-2][col] == colour)
                     {
-                      //AIcol = col;
+                      //aiCol = col;
                       //bestMove = true;
 
                       if(row > 2 && grid[row-3][col] == colour)
                       {
-                        AIcol = col;
+                        aiCol = col;
                         bestMove = true;
-                        winningMove == true;
                       }
                     }
                   }
@@ -261,31 +256,27 @@
                   //XOOO//
                   if(grid[row][col+1] == colour && grid[row][col+2] == colour && grid[row][col+3] == colour)
                   {
-                      AIcol = col;
+                      aiCol = col;
                       bestMove = true;
-                      winningMove == true;
                   }
                   //Check for 3 to the left
                   //OOOX//
                   if(grid[row][col-1] == colour && grid[row][col-2] == colour && grid[row][col-3] == colour)
                   {
-                      AIcol = col;
+                      aiCol = col;
                       bestMove = true;
-                      winningMove == true;
                   }
                   //OOXO//
                   if(grid[row][col+1] == colour && grid[row][col-1] == colour && grid[row][col-2] == colour)
                   {
-                      AIcol = col;
+                      aiCol = col;
                       bestMove = true;
-                      winningMove == true;
                   }
                   //OXOO//
                   if(grid[row][col-1] == colour && grid[row][col+1] == colour && grid[row][col+2] == colour)
                   {
-                      AIcol = col;
+                      aiCol = col;
                       bestMove = true;
-                      winningMove == true;
                   }
                   /////O//
                   ////O///
@@ -295,9 +286,8 @@
                   {
                     if(grid[row+1][col+1] == colour && grid[row+2][col+2] == colour && grid[row+3][col+3] == colour)
                     {
-                        AIcol = col;
+                        aiCol = col;
                         bestMove = true;
-                        winningMove == true;
                     }
                   }
                   /////X//
@@ -308,9 +298,8 @@
                   {
                     if(grid[row-1][col-1] == colour && grid[row-2][col-2] == colour && grid[row-3][col-3] == colour)
                     {
-                        AIcol = col;
+                        aiCol = col;
                         bestMove = true;
-                        winningMove == true;
                     }
                   }
                   //O/////
@@ -321,9 +310,8 @@
                   {
                     if(grid[row+1][col-1] == colour && grid[row+2][col-2] == colour && grid[row+3][col-3] == colour)
                     {
-                        AIcol = col;
+                        aiCol = col;
                         bestMove = true;
-                        winningMove == true;
                     }
                   }
                   //X/////
@@ -334,9 +322,8 @@
                   {
                     if(grid[row-1][col+1] == colour && grid[row-2][col+2] == colour && grid[row-3][col+3] == colour)
                     {
-                        AIcol = col;
+                        aiCol = col;
                         bestMove = true;
-                        winningMove == true;
                     }
                   }
                   /////O//
@@ -347,9 +334,8 @@
                   {
                     if(grid[row-1][col-1] == colour && grid[row+1][col+1] == colour && grid[row+2][col+2] == colour)
                     {
-                        AIcol = col;
+                        aiCol = col;
                         counterMove = true;
-                        winningMove == true;
                     }
                   }
                   /////O//
@@ -360,9 +346,8 @@
                   {
                     if(grid[row-1][col-1] == colour && grid[row-2][col-2] == colour && grid[row+1][col+1] == colour)
                     {
-                        AIcol = col;
+                        aiCol = col;
                         counterMove = true;
-                        winningMove == true;
                     }
                   }
                   //O/////
@@ -373,9 +358,8 @@
                   {
                     if(grid[row-1][col+1] == colour && grid[row+1][col-1] == colour && grid[row+2][col-2] == colour)
                     {
-                        AIcol = col;
+                        aiCol = col;
                         counterMove = true;
-                        winningMove == true;
                     }
                   }
                   //O/////
@@ -386,9 +370,8 @@
                   {
                     if(grid[row-1][col+1] == colour && grid[row-2][col+2] == colour && grid[row+1][col-1] == colour)
                     {
-                        AIcol = col;
+                        aiCol = col;
                         counterMove = true;
-                        winningMove == true;
                     }
                   }
                 }
@@ -669,43 +652,43 @@
            //Check if row is less than 3 to avoid going upwards when only space for 3
            if(row < 3 && grid[row+1][col] == '')
            {
-              AIcol = col;
+              aiCol = col;
               freeSpace = true;
               return true;
            }
            else if(grid[row][col-1] == '' && grid[row-1][col-1] != '')
            {
-              AIcol = col - 1;
+              aiCol = col - 1;
               freeSpace = true;
               return true;
            }
            else if(grid[row][col+1] == '' && grid[row-1][col+1] != '')
            {
-              AIcol = col + 1;
+              aiCol = col + 1;
               freeSpace = true;
               return true;
            }
            else if(grid[row+1][col-1] == '' && grid[row][col-1] != '')
            {
-              AIcol = col - 1;
+              aiCol = col - 1;
               freeSpace = true;
               return true;
            }
            else if(grid[row+1][col+1] == '' && grid[row][col+1] != '')
            {
-              AIcol = col + 1;
+              aiCol = col + 1;
               freeSpace = true;
               return true;
            }
            else if(row > 0 && grid[row-1][col+1] == '')
            {
-              AIcol = col + 1;
+              aiCol = col + 1;
               freeSpace = true;
               return true;
            }
            else if(row > 0 && grid[row-1][col-1] == '')
            {
-              AIcol = col + 1;
+              aiCol = col + 1;
               freeSpace = true;
               return true;
            }
