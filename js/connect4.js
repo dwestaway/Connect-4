@@ -134,6 +134,8 @@
         //Mouse click listener
         canvas.addEventListener('click', function(evt) {
 
+            var column = 0;
+
             if(gameOver == false)
             {
 
@@ -142,74 +144,89 @@
             {
                 if(ai == false)
                 {
+                    //Find which column was clicked on
+                    column = getColumnClick(event);
 
-                    //change text to allow players to see whos turn it is
-                    text.innerHTML = "Yellow Player's Turn";
-                    text.style.color = "yellow";
+                    //Check if column is full
+                    checkColumn(column);
 
-                    turn = 'yellow';
+                    if(columnFull == false)
+                    {
+                        drawCircle(column, 'red');
 
-                    drawCircle(getColumnClick(event), 'red');
+                        //change text to allow players to see whos turn it is
+                        text.innerHTML = "Yellow Player's Turn";
+                        text.style.color = "yellow";
+                        //change players turn to yellow
+                        turn = 'yellow';
+                    }
+
                 }
                 else if(ai == true)
                 {
-                    drawCircle(getColumnClick(event), 'red');
+                    column = getColumnClick(event);
+                    checkColumn(column);
 
-                    if(gameOver != true)
+                    if(columnFull == false)
                     {
-                        var column;
+                        drawCircle(column, 'red');
 
-                        bestMove = false;
-                        freeSpace = false;
-                        aiCol = 0;
-
-                        AIfindBestMove('yellow'); //check if AI is 1 from a 4 in a row, this will favor over the above
-                        AIfindBestMove('red'); //check if player is 1 from a 4 in a row
-
-                        //If no best moves were round, and not first turn, check for next best move
-                        if(bestMove == false && firstMove == false)
+                        if(gameOver != true)
                         {
-                          AIfindNextBestMove(AIlastMoveRow, AIlastMoveCol);
-                        }
+                            var column;
 
-                        firstMove = false;
+                            bestMove = false;
+                            freeSpace = false;
+                            aiCol = 0;
 
-                        if(bestMove == true)
-                        {
-                            column = aiCol + 1;
-                        }
-                        else if(freeSpace == true)
-                        {
-                            column = aiCol + 1;
-                        }
-                        else
-                        {
-                            //console.log('random');
-                            //column = 1;
-                            //This only happens on first turn and if no space near previous turn
-                            column = Math.floor((Math.random() * 7) + 1);
-                        }
+                            AIfindBestMove('yellow'); //check if AI is 1 from a 4 in a row, this will favor over the above
+                            AIfindBestMove('red'); //check if player is 1 from a 4 in a row
 
-                    drawCircle(column - 1, 'yellow');
+                            //If no best moves were round, and not first turn, check for next best move
+                            if(bestMove == false && firstMove == false)
+                            {
+                              AIfindNextBestMove(AIlastMoveRow, AIlastMoveCol);
+                            }
 
+                            firstMove = false;
+
+                            if(bestMove == true)
+                            {
+                                column = aiCol + 1;
+                            }
+                            else if(freeSpace == true)
+                            {
+                                column = aiCol + 1;
+                            }
+                            else
+                            {
+                                //console.log('random');
+                                //column = 1;
+                                //This only happens on first turn and if no space near previous turn
+                                column = Math.floor((Math.random() * 7) + 1);
+                            }
+
+                        drawCircle(column - 1, 'yellow');
+
+                        }
                     }
                 }
-
             }
             else if(turn == 'yellow')
             {
-                text.innerHTML = "Red Player's Turn";
-                text.style.color = "red";
 
-                drawCircle(getColumnClick(event), 'yellow');
+                column = getColumnClick(event);
+                checkColumn(column);
 
-                if(ai == false)
+                if(columnFull == false)
                 {
+                    drawCircle(column, 'yellow');
+
+                    text.innerHTML = "Red Player's Turn";
+                    text.style.color = "red";
                     turn = 'red';
                 }
             }
-
-
             refreshGrid();
 
             }
@@ -222,6 +239,8 @@
 
             return Math.floor(x / 100); //divide by 100 because canvas is 700x600 and grid is 7x6, then round down
         }
+
+        //Find the best move for the AI, this checks for 3 in a rows of either colour
         function AIfindBestMove(colour) {
 
             var row;
@@ -229,9 +248,8 @@
             //loop through all columns
             for(var col = 0; col < 7; col++)
             {
-                columnFull = false;
 
-                row = getFirstEmpty(col);
+                row = checkColumn(col);
 
                 //if a best move is found, do not continue searching
                 if(columnFull == false)
@@ -378,9 +396,11 @@
             }
         }
 
-        //find first empty row in the column
-        function getFirstEmpty(column)
+        //find first empty row in the column, or find out if column is full
+        function checkColumn(column)
         {
+            columnFull = false;
+
             for (var row = 0; row < grid.length; row++)
             {
                 if(grid[row][column] == '')
