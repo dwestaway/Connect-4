@@ -198,23 +198,21 @@
                             {
                                 column = aiCol + 1;
                             }
-                            else if(freeSpace == true)
+                            //check if free space near previous turn is true, and column is not out of grid range
+                            else if(freeSpace == true && aiCol < 7)
                             {
                                 column = aiCol + 1;
                             }
                             else
                             {
-                                //console.log('random');
-                                //column = 1;
                                 //This only happens on first turn and if no space near previous turn
                                 column = Math.floor((Math.random() * 7) + 1);
                             }
 
+                        //reset text back, in case it was change by column being full
                         text.innerHTML = "Red Player's Turn";
 
                         drawCircle(column - 1, 'yellow');
-
-
 
                         }
                     }
@@ -222,8 +220,6 @@
                     {
                         text.innerHTML = "Column is Full"
                     }
-
-
 
                 }
 
@@ -254,10 +250,12 @@
 
         //Find out which column is clicked
         function getColumnClick(event) {
+            //get the horizontal coordinates of the click on canvas
             var rect = canvas.getBoundingClientRect();
             var x = event.clientX - rect.left;
 
-            return Math.floor(x / 100); //divide by 100 because canvas is 700x600 and grid is 7x6, then round down
+            //divide by 100 because canvas is 700x600 and grid is 7x6, then round down
+            return Math.floor(x / 100);
         }
 
         //Find the best move for the AI, this checks for 3 in a rows of either colour
