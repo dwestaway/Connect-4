@@ -1,4 +1,3 @@
-$(function() { //jquery handler
 
         //circle object
         var circle = {
@@ -37,6 +36,29 @@ $(function() { //jquery handler
             }
           }
         }
+        function resetGrid() {
+          for(row = 0; row < grid.length; row++) {
+            for(col = 0; col < grid[row].length; col++) {
+                //set all contents of grid array to blank
+                grid[row][col] = '';
+            }
+          }
+          resetGame();
+        }
+
+        function resetGame() {
+          //make sure game starts on red players turn after reset
+          turn = 'red';
+
+          //reset gameOver state
+          gameOver = false;
+          firstMove = true;
+
+          text.innerHTML = "Red Player's Turn";
+          text.style.color = "red";
+
+          refreshGrid();
+        }
 
         //Calculate the row and column into exact coordinates on canvas
         function calculateCircle(col, row, name) {
@@ -52,6 +74,7 @@ $(function() { //jquery handler
           {
               createCircle(centerX, centerY, circle.yellow.colour);
           }
+          //if no name is specificied, for example if it is blank, fill with white circle, this is done for all empty circles
           else
           {
               createCircle(centerX, centerY, 'white');
@@ -80,7 +103,11 @@ $(function() { //jquery handler
 
                     checkForWin(row, column, colour);
 
+<<<<<<< HEAD
                     if(AI == true)
+=======
+                    if(ai == true)
+>>>>>>> master
                     {
                         if(colour == 'yellow')
                         {
@@ -96,25 +123,40 @@ $(function() { //jquery handler
 
         }
 
+        var ai = false;
+
         var turn = 'red';
         var firstMove = true;
         var bestMove = false;
         var freeSpace = false;
         var columnFull = false;
+<<<<<<< HEAD
         var AIcol = 0;
         var AIlastMoveCol = 0;
         var AIlastMoveRow = 0;
 
         //use player location for AI close to winner check
+=======
+        var aiCol = 0;
+        var AIlastMoveCol = 0;
+        var AIlastMoveRow = 0;
+        var gameOver = false;
+
+        text = document.getElementById('text');
+>>>>>>> master
 
         //Mouse click listener
         canvas.addEventListener('click', function(evt) {
 
-            text = document.getElementById('text');
+            var column = 0;
+
+            if(gameOver == false)
+            {
 
             //swap turns, change text and place circle on each click
             if(turn == 'red')
             {
+<<<<<<< HEAD
                 if(AI == false)
                 {
 
@@ -178,17 +220,295 @@ $(function() { //jquery handler
                 {
                     turn = 'red';
                 }
-            }
+=======
+                if(ai == false)
+                {
+                    //Find which column was clicked on
+                    column = getColumnClick(event);
 
+                    //Check if column is full
+                    checkColumn(column);
+
+                    if(columnFull == false)
+                    {
+                        drawCircle(column, 'red');
+
+                        //change text to allow players to see whos turn it is
+                        text.innerHTML = "Yellow Player's Turn";
+                        text.style.color = "yellow";
+                        //change players turn to yellow
+                        turn = 'yellow';
+                    }
+                    else if(columnFull == true)
+                    {
+                       text.innerHTML = "Column is Full"
+                    }
+
+                }
+                else if(ai == true)
+                {
+                    column = getColumnClick(event);
+                    checkColumn(column);
+
+                    if(columnFull == false)
+                    {
+                        drawCircle(column, 'red');
+
+                        if(gameOver != true)
+                        {
+                            var column;
+
+                            bestMove = false;
+                            freeSpace = false;
+                            aiCol = 0;
+
+                            AIfindBestMove('yellow'); //check if AI is 1 from a 4 in a row, this will favor over the above
+                            AIfindBestMove('red'); //check if player is 1 from a 4 in a row
+
+                            //If no best moves were round, and not first turn, check for next best move
+                            if(bestMove == false && firstMove == false)
+                            {
+                                AIfindNextBestMove(AIlastMoveRow, AIlastMoveCol);
+                            }
+
+                            firstMove = false;
+
+                            if(bestMove == true)
+                            {
+                                column = aiCol + 1;
+                            }
+                            //check if free space near previous turn is true, and column is not out of grid range
+                            else if(freeSpace == true && aiCol < 7)
+                            {
+                                column = aiCol + 1;
+                            }
+                            else
+                            {
+                                //This only happens on first turn and if no space near previous turn
+                                column = Math.floor((Math.random() * 7) + 1);
+                            }
+
+                        //reset text back, in case it was change by column being full
+                        text.innerHTML = "Red Player's Turn";
+
+                        drawCircle(column - 1, 'yellow');
+
+                        }
+                    }
+                    else if(columnFull == true)
+                    {
+                        text.innerHTML = "Column is Full"
+                    }
+
+                }
+
+>>>>>>> master
+            }
+            else if(turn == 'yellow')
+            {
+
+                column = getColumnClick(event);
+                checkColumn(column);
+
+                if(columnFull == false)
+                {
+                    drawCircle(column, 'yellow');
+
+                    text.innerHTML = "Red Player's Turn";
+                    text.style.color = "red";
+                    turn = 'red';
+                }
+                else if(columnFull == true)
+                {
+                    text.innerHTML = "Column is Full"
+                }
+            }
             refreshGrid();
+
+            }
         });
 
         //Find out which column is clicked
         function getColumnClick(event) {
+            //get the horizontal coordinates of the click on canvas
             var rect = canvas.getBoundingClientRect();
             var x = event.clientX - rect.left;
 
-            return Math.floor(x / 100); //divide by 100 because canvas is 700x600 and grid is 7x6, then round down
+            //divide by 100 because canvas is 700x600 and grid is 7x6, then round down
+            return Math.floor(x / 100);
+        }
+
+        //Find the best move for the AI, this checks for 3 in a rows of either colour
+        function AIfindBestMove(colour) {
+
+            var row;
+
+            //loop through all columns
+            for(var col = 0; col < 7; col++)
+            {
+
+                row = checkColumn(col);
+
+                //if a best move is found, do not continue searching
+                if(columnFull == false)
+                {
+                  //Check for 3 up
+                  if(row > 1)
+                  {
+                    //check for 2 upwards, replace aiCol if there is 3 upwards
+                    if(grid[row-1][col] == colour && grid[row-2][col] == colour)
+                    {
+                      //aiCol = col;
+                      //bestMove = true;
+
+                      if(row > 2 && grid[row-3][col] == colour)
+                      {
+                        aiCol = col;
+                        bestMove = true;
+                      }
+                    }
+                  }
+                  //Check for 3 to the right
+                  //XOOO//
+                  if(grid[row][col+1] == colour && grid[row][col+2] == colour && grid[row][col+3] == colour)
+                  {
+                      aiCol = col;
+                      bestMove = true;
+                  }
+                  //Check for 3 to the left
+                  //OOOX//
+                  if(grid[row][col-1] == colour && grid[row][col-2] == colour && grid[row][col-3] == colour)
+                  {
+                      aiCol = col;
+                      bestMove = true;
+                  }
+                  //OOXO//
+                  if(grid[row][col+1] == colour && grid[row][col-1] == colour && grid[row][col-2] == colour)
+                  {
+                      aiCol = col;
+                      bestMove = true;
+                  }
+                  //OXOO//
+                  if(grid[row][col-1] == colour && grid[row][col+1] == colour && grid[row][col+2] == colour)
+                  {
+                      aiCol = col;
+                      bestMove = true;
+                  }
+                  /////O//
+                  ////O///
+                  ///O////
+                  //X/////
+                  if (row < 3)
+                  {
+                    if(grid[row+1][col+1] == colour && grid[row+2][col+2] == colour && grid[row+3][col+3] == colour)
+                    {
+                        aiCol = col;
+                        bestMove = true;
+                    }
+                  }
+                  /////X//
+                  ////O///
+                  ///O////
+                  //O/////
+                  if (row > 2)
+                  {
+                    if(grid[row-1][col-1] == colour && grid[row-2][col-2] == colour && grid[row-3][col-3] == colour)
+                    {
+                        aiCol = col;
+                        bestMove = true;
+                    }
+                  }
+                  //O/////
+                  ///O////
+                  ////O///
+                  /////X//
+                  if (row < 3)
+                  {
+                    if(grid[row+1][col-1] == colour && grid[row+2][col-2] == colour && grid[row+3][col-3] == colour)
+                    {
+                        aiCol = col;
+                        bestMove = true;
+                    }
+                  }
+                  //X/////
+                  ///O////
+                  ////O///
+                  /////O//
+                  if (row > 2)
+                  {
+                    if(grid[row-1][col+1] == colour && grid[row-2][col+2] == colour && grid[row-3][col+3] == colour)
+                    {
+                        aiCol = col;
+                        bestMove = true;
+                    }
+                  }
+                  /////O//
+                  ////O///
+                  ///X////
+                  //O/////
+                  if(row > 0 && row < 4)
+                  {
+                    if(grid[row-1][col-1] == colour && grid[row+1][col+1] == colour && grid[row+2][col+2] == colour)
+                    {
+                        aiCol = col;
+                        counterMove = true;
+                    }
+                  }
+                  /////O//
+                  ////X///
+                  ///O////
+                  //O/////
+                  if(row > 1 && row < 5)
+                  {
+                    if(grid[row-1][col-1] == colour && grid[row-2][col-2] == colour && grid[row+1][col+1] == colour)
+                    {
+                        aiCol = col;
+                        counterMove = true;
+                    }
+                  }
+                  //O/////
+                  ///O////
+                  ////X///
+                  /////O//
+                  if(row > 0 && row < 4)
+                  {
+                    if(grid[row-1][col+1] == colour && grid[row+1][col-1] == colour && grid[row+2][col-2] == colour)
+                    {
+                        aiCol = col;
+                        counterMove = true;
+                    }
+                  }
+                  //O/////
+                  ///X////
+                  ////O///
+                  /////O//
+                  if(row > 1 && row < 5)
+                  {
+                    if(grid[row-1][col+1] == colour && grid[row-2][col+2] == colour && grid[row+1][col-1] == colour)
+                    {
+                        aiCol = col;
+                        counterMove = true;
+                    }
+                  }
+                }
+            }
+        }
+
+        //find first empty row in the column, or find out if column is full
+        function checkColumn(column)
+        {
+            columnFull = false;
+
+            for (var row = 0; row < grid.length; row++)
+            {
+                if(grid[row][column] == '')
+                {
+                    return row;
+                }
+            }
+            columnFull = true;
+
+            return false;
         }
         function AIfindBestMove(colour) {
 
@@ -610,8 +930,8 @@ $(function() { //jquery handler
 
             text.innerHTML = winner + ' is the winner!';
             text.style.color = colour;
-        }
 
+<<<<<<< HEAD
         //Check for free spaces next to the previous move
         function AIfindNextBestMove(row, col)
         {
@@ -662,10 +982,77 @@ $(function() { //jquery handler
            return false;
         }
 
+=======
+            gameOver = true;
+        }
+>>>>>>> master
 
+        //Check for free spaces next to the previous move
+        function AIfindNextBestMove(row, col)
+        {
+           //Check if row is less than 3 to avoid going upwards when only space for 3
+           if(row < 3 && grid[row+1][col] == '')
+           {
+              aiCol = col;
+              freeSpace = true;
+              return true;
+           }
+           else if(grid[row][col-1] == '' && grid[row-1][col-1] != '')
+           {
+              aiCol = col - 1;
+              freeSpace = true;
+              return true;
+           }
+           else if(grid[row][col+1] == '' && grid[row-1][col+1] != '')
+           {
+              aiCol = col + 1;
+              freeSpace = true;
+              return true;
+           }
+           else if(grid[row+1][col-1] == '' && grid[row][col-1] != '')
+           {
+              aiCol = col - 1;
+              freeSpace = true;
+              return true;
+           }
+           else if(grid[row+1][col+1] == '' && grid[row][col+1] != '')
+           {
+              aiCol = col + 1;
+              freeSpace = true;
+              return true;
+           }
+           else if(row > 0 && grid[row-1][col+1] == '')
+           {
+              aiCol = col + 1;
+              freeSpace = true;
+              return true;
+           }
+           else if(row > 0 && grid[row-1][col-1] == '')
+           {
+              aiCol = col + 1;
+              freeSpace = true;
+              return true;
+           }
+
+           return false;
+        }
+
+        var buttonPVP = document.getElementById("pvpButton");
+        var buttonAI = document.getElementById("aiButton");
+
+        buttonPVP.onclick = function() {
+            ai = false;
+            resetGrid();
+        };
+        buttonAI.onclick = function() {
+            ai = true;
+            resetGrid();
+        };
+
+        //qunit practice
+        function sum(a,b)
+        {
+          return a+b;
+        }
 
         refreshGrid();
-
-
-
-} (jQuery));
