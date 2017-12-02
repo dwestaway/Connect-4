@@ -26,8 +26,6 @@
         canvas = document.getElementById('connect4');
         context = canvas.getContext('2d');
 
-        var AI = true;
-
         //Draw grid, loop through every item in grid array and call calculateCircle
         function refreshGrid() {
           for(row = 0; row < grid.length; row++) {
@@ -103,11 +101,7 @@
 
                     checkForWin(row, column, colour);
 
-<<<<<<< HEAD
-                    if(AI == true)
-=======
                     if(ai == true)
->>>>>>> master
                     {
                         if(colour == 'yellow')
                         {
@@ -130,20 +124,12 @@
         var bestMove = false;
         var freeSpace = false;
         var columnFull = false;
-<<<<<<< HEAD
-        var AIcol = 0;
-        var AIlastMoveCol = 0;
-        var AIlastMoveRow = 0;
-
-        //use player location for AI close to winner check
-=======
         var aiCol = 0;
         var AIlastMoveCol = 0;
         var AIlastMoveRow = 0;
         var gameOver = false;
 
         text = document.getElementById('text');
->>>>>>> master
 
         //Mouse click listener
         canvas.addEventListener('click', function(evt) {
@@ -156,71 +142,6 @@
             //swap turns, change text and place circle on each click
             if(turn == 'red')
             {
-<<<<<<< HEAD
-                if(AI == false)
-                {
-
-                    text.innerHTML = "Yellow Player's Turn";
-                    text.style.color = "yellow";
-                    turn = 'yellow';
-
-                    drawCircle(getColumnClick(event), 'red');
-                }
-                else if(AI == true)
-                {
-                    drawCircle(getColumnClick(event), 'red');
-
-                    var column;
-
-                    bestMove = false;
-                    freeSpace = false;
-
-                    AIcol = 0;
-
-                    AIfindBestMove('red'); //check if player is 1 from a 4 in a row
-                    AIfindBestMove('yellow'); //check if AI is 1 from a 4 in a row, this will favor over the above
-
-                    //If no best moves were round, and not first turn, check for next best move
-                    if(bestMove == false && firstMove == false)
-                    {
-                        AIfindNextBestMove(AIlastMoveRow, AIlastMoveCol);
-                    }
-
-                    firstMove = false;
-
-                    if(bestMove == true)
-                    {
-                        column = AIcol + 1;
-
-                    }
-                    else if(freeSpace == true)
-                    {
-                        column = AIcol + 1;
-                    }
-                    else
-                    {
-                        //console.log('random');
-                        //column = 1;
-                        //This only happens on first turn and if no space near previous turn
-                        column = Math.floor((Math.random() * 7) + 1);
-                    }
-
-                    drawCircle(column - 1, 'yellow');
-                }
-
-            }
-            else if(turn == 'yellow')
-            {
-                text.innerHTML = "Red Player's Turn";
-                text.style.color = "red";
-
-                drawCircle(getColumnClick(event), 'yellow');
-
-                if(AI == false)
-                {
-                    turn = 'red';
-                }
-=======
                 if(ai == false)
                 {
                     //Find which column was clicked on
@@ -302,7 +223,6 @@
 
                 }
 
->>>>>>> master
             }
             else if(turn == 'yellow')
             {
@@ -499,176 +419,6 @@
         {
             columnFull = false;
 
-            for (var row = 0; row < grid.length; row++)
-            {
-                if(grid[row][column] == '')
-                {
-                    return row;
-                }
-            }
-            columnFull = true;
-
-            return false;
-        }
-        function AIfindBestMove(colour) {
-
-            var row;
-
-            //loop through all columns
-            for(var col = 0; col < 7; col++)
-            {
-                columnFull = false;
-
-                row = getFirstEmpty(col);
-
-                //if a best move is found, do not continue searching
-                if(columnFull == false && bestMove == false)
-                {
-                  //Check for 3 up
-                  if(row > 1)
-                  {
-                    //check for 2 upwards, replace AIcol if there is 3 upwards
-                    if(grid[row-1][col] == colour && grid[row-2][col] == colour)
-                    {
-                      //AIcol = col;
-                      //bestMove = true;
-
-                      if(row > 2 && grid[row-3][col] == colour)
-                      {
-                        AIcol = col;
-                        bestMove = true;
-                      }
-                    }
-                  }
-                  //Check for 3 to the right
-                  //XOOO//
-                  if(grid[row][col+1] == colour && grid[row][col+2] == colour && grid[row][col+3] == colour)
-                  {
-                      AIcol = col;
-                      bestMove = true;
-                  }
-                  //Check for 3 to the left
-                  //OOOX//
-                  if(grid[row][col-1] == colour && grid[row][col-2] == colour && grid[row][col-3] == colour)
-                  {
-                      AIcol = col;
-                      bestMove = true;
-                  }
-                  //OOXO//
-                  if(grid[row][col+1] == colour && grid[row][col-1] == colour && grid[row][col-2] == colour)
-                  {
-                      AIcol = col;
-                      bestMove = true;
-                  }
-                  //OXOO//
-                  if(grid[row][col-1] == colour && grid[row][col+1] == colour && grid[row][col+2] == colour)
-                  {
-                      AIcol = col;
-                      bestMove = true;
-                  }
-                  /////O//
-                  ////O///
-                  ///O////
-                  //X/////
-                  if (row < 3)
-                  {
-                    if(grid[row+1][col+1] == colour && grid[row+2][col+2] == colour && grid[row+3][col+3] == colour)
-                    {
-                        AIcol = col;
-                        bestMove = true;
-                    }
-                  }
-                  /////X//
-                  ////O///
-                  ///O////
-                  //O/////
-                  if (row > 2)
-                  {
-                    if(grid[row-1][col-1] == colour && grid[row-2][col-2] == colour && grid[row-3][col-3] == colour)
-                    {
-                        AIcol = col;
-                        bestMove = true;
-                    }
-                  }
-                  //O/////
-                  ///O////
-                  ////O///
-                  /////X//
-                  if (row < 3)
-                  {
-                    if(grid[row+1][col-1] == colour && grid[row+2][col-2] == colour && grid[row+3][col-3] == colour)
-                    {
-                        AIcol = col;
-                        bestMove = true;
-                    }
-                  }
-                  //X/////
-                  ///O////
-                  ////O///
-                  /////O//
-                  if (row > 2)
-                  {
-                    if(grid[row-1][col+1] == colour && grid[row-2][col+2] == colour && grid[row-3][col+3] == colour)
-                    {
-                        AIcol = col;
-                        bestMove = true;
-                    }
-                  }
-                  /////O//
-                  ////O///
-                  ///X////
-                  //O/////
-                  if(row > 0 && row < 4)
-                  {
-                    if(grid[row-1][col-1] == colour && grid[row+1][col+1] == colour && grid[row+2][col+2] == colour)
-                    {
-                        AIcol = col;
-                        counterMove = true;
-                    }
-                  }
-                  /////O//
-                  ////X///
-                  ///O////
-                  //O/////
-                  if(row > 1 && row < 5)
-                  {
-                    if(grid[row-1][col-1] == colour && grid[row-2][col-2] == colour && grid[row+1][col+1] == colour)
-                    {
-                        AIcol = col;
-                        counterMove = true;
-                    }
-                  }
-                  //O/////
-                  ///O////
-                  ////X///
-                  /////O//
-                  if(row > 0 && row < 4)
-                  {
-                    if(grid[row-1][col+1] == colour && grid[row+1][col-1] == colour && grid[row+2][col-2] == colour)
-                    {
-                        AIcol = col;
-                        counterMove = true;
-                    }
-                  }
-                  //O/////
-                  ///X////
-                  ////O///
-                  /////O//
-                  if(row > 1 && row < 5)
-                  {
-                    if(grid[row-1][col+1] == colour && grid[row-2][col+2] == colour && grid[row+1][col-1] == colour)
-                    {
-                        AIcol = col;
-                        counterMove = true;
-                    }
-                  }
-                }
-            }
-        }
-
-        //find first empty row in the column
-        function getFirstEmpty(column)
-        {
             for (var row = 0; row < grid.length; row++)
             {
                 if(grid[row][column] == '')
@@ -931,61 +681,8 @@
             text.innerHTML = winner + ' is the winner!';
             text.style.color = colour;
 
-<<<<<<< HEAD
-        //Check for free spaces next to the previous move
-        function AIfindNextBestMove(row, col)
-        {
-           //Check if row is less than 3 to avoid going upwards when only space for 3
-           if(row < 3 && grid[row+1][col] == '')
-           {
-              AIcol = col;
-              freeSpace = true;
-              return true;
-           }
-           else if(grid[row][col-1] == '')
-           {
-              AIcol = col - 1;
-              freeSpace = true;
-              return true;
-           }
-           else if(grid[row][col+1] == '')
-           {
-              AIcol = col + 1;
-              freeSpace = true;
-              return true;
-           }
-           else if(grid[row+1][col-1] == '')
-           {
-              AIcol = col - 1;
-              freeSpace = true;
-              return true;
-           }
-           else if(grid[row+1][col+1] == '')
-           {
-              AIcol = col + 1;
-              freeSpace = true;
-              return true;
-           }
-           else if(grid[row-1][col+1] == '')
-           {
-              AIcol = col + 1;
-              freeSpace = true;
-              return true;
-           }
-           else if(grid[row-1][col-1] == '')
-           {
-              AIcol = col + 1;
-              freeSpace = true;
-              return true;
-           }
-
-           return false;
-        }
-
-=======
             gameOver = true;
         }
->>>>>>> master
 
         //Check for free spaces next to the previous move
         function AIfindNextBestMove(row, col)

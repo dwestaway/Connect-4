@@ -21,38 +21,8 @@ h2 {
 	-webkit-text-stroke-width: 1px;
   -webkit-text-stroke-color: black;
 }
-<<<<<<< HEAD
-.redButton {
-		background-color: red;
-    border: 2px solid black;
-		border-radius: 50%;
-		width: 100px;
-		height: 100px;
-    color: white;
-    padding: 10px 25px;
-    text-align: center;
-    text-decoration: none;
-    font-size: 16px;
-		display: inline;
-		float: none;
-}
-.yellowButton {
-		background-color: yellow;
-    border: 2px solid black;
-		border-radius: 50%;
-		width: 100px;
-		height: 100px;
-    color: black;
-    padding: 10px 25px;
-    text-align: center;
-    text-decoration: none;
-    font-size: 16px;
-		display: inline;
-		float: none;
-=======
 div {
 	text-align: center;
->>>>>>> master
 }
 .button {
 		background-color: white;
