@@ -5,24 +5,33 @@ var socket = io();
 
 //update grid from server
 socket.on('updateGrid', function(data) {
-    grid = data;
 
-    refreshGrid();
+    if(online == true)
+    {
+        grid = data;
+
+        refreshGrid();
+    }
+
 });
 //update current turn from server
 socket.on('updateTurn', function(data) {
-    turn = data;
 
-    if(turn == 'red')
+    if(online == true)
     {
-        text.innerHTML = "Red Player's Turn";
-        text.style.color = "red";
+        turn = data;
 
-    }
-    else if(turn == 'yellow')
-    {
-        text.innerHTML = "Yellow Player's Turn";
-        text.style.color = "yellow";
+        if(turn == 'red')
+        {
+            text.innerHTML = "Red Player's Turn";
+            text.style.color = "red";
+
+        }
+        else if(turn == 'yellow')
+        {
+            text.innerHTML = "Yellow Player's Turn";
+            text.style.color = "yellow";
+        }
     }
 });
 ////////////////////////
@@ -82,6 +91,7 @@ socket.on('updateTurn', function(data) {
           //make sure game starts on red players turn after reset
           turn = 'red';
 
+          //tell the server that the turn is reset
           socket.emit('sendTurn',turn);
 
           //reset gameOver state
@@ -155,6 +165,7 @@ socket.on('updateTurn', function(data) {
         }
 
         var ai = false;
+        var online = false;
 
         var turn = 'red';
         var firstMove = true;
@@ -283,9 +294,12 @@ socket.on('updateTurn', function(data) {
             }
             refreshGrid();
 
-            socket.emit('sendGrid',grid);
-
-            socket.emit('sendTurn',turn);
+            if(online == true)
+            {
+                //send grid and turn to the server
+                socket.emit('sendGrid',grid);
+                socket.emit('sendTurn',turn);
+            }
 
             }
         });
@@ -779,16 +793,24 @@ socket.on('updateTurn', function(data) {
         var buttonPVP = document.getElementById("pvpButton");
         var buttonAI = document.getElementById("aiButton");
         var buttonReset = document.getElementById("resetButton");
+        var buttonOnline = document.getElementById("onlineButton")
 
         buttonPVP.onclick = function() {
             ai = false;
+            online = false;
             resetGrid();
         };
         buttonAI.onclick = function() {
             ai = true;
+            online = false;
             resetGrid();
         };
         buttonReset.onclick = function() {
+            resetGrid();
+        };
+        buttonOnline.onclick = function() {
+            ai = false;
+            online = true;
             resetGrid();
         };
 
