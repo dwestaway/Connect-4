@@ -1,23 +1,31 @@
-var ctx = document.getElementById("connect4").getContext("2d");
-ctx.font = '30px Arial';
-
+////////////////////////
+//Socket/node.js stuff
+////////////////////////
 var socket = io();
 
-
-socket.emit('hello');
-
-
-
-socket.on('serverMsg', function(data) {
-    console.log(data.msg);
-});
-
+//update grid from server
 socket.on('updateGrid', function(data) {
     grid = data;
 
     refreshGrid();
 });
+//update current turn from server
+socket.on('updateTurn', function(data) {
+    turn = data;
 
+    if(turn == 'red')
+    {
+        text.innerHTML = "Red Player's Turn";
+        text.style.color = "red";
+
+    }
+    else if(turn == 'yellow')
+    {
+        text.innerHTML = "Yellow Player's Turn";
+        text.style.color = "yellow";
+    }
+});
+////////////////////////
 
 
         //circle object
@@ -64,6 +72,7 @@ socket.on('updateGrid', function(data) {
                 grid[row][col] = '';
             }
           }
+          //send the grid to the server
           socket.emit('sendGrid',grid);
 
           resetGame();
@@ -73,8 +82,11 @@ socket.on('updateGrid', function(data) {
           //make sure game starts on red players turn after reset
           turn = 'red';
 
+          socket.emit('sendTurn',turn);
+
           //reset gameOver state
           gameOver = false;
+
           firstMove = true;
 
           text.innerHTML = "Red Player's Turn";
@@ -272,6 +284,8 @@ socket.on('updateGrid', function(data) {
             refreshGrid();
 
             socket.emit('sendGrid',grid);
+
+            socket.emit('sendTurn',turn);
 
             }
         });

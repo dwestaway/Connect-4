@@ -21,7 +21,8 @@ var grid = [
     ['', '', '', '', '', '', ''],
     ['', '', '', '', '', '', ''],
 ];
-var turn;
+var turn = 'red';
+var gameOver = 'false';
 
 var io = require('socket.io')(serv,{});
 io.sockets.on('connection', function(socket){
@@ -37,19 +38,17 @@ io.sockets.on('connection', function(socket){
 
     console.log('Client connected through socket ' + socket.id);
 
-    //recieve message
-    socket.on('hello',function() {
-        //console.log('hello from client');
-    });
-    //send message
-    socket.emit('serverMsg',{
-        msg:'hello from server',
-    });
-
+    //recieve grid data
     socket.on('sendGrid',function(data) {
-        //console.log('test' + data[0][0] + data[0][1] + data[0][2] + data[0][3] + data[0][4] + data[0][5] + data[0][6]);
-
         grid = data;
+    });
+    //recieve turn data
+    socket.on('sendTurn',function(data) {
+        turn = data;
+    });
+    //recieve gameOver data
+    socket.on('sendGameOver',function(data) {
+        gameOver = data;
     });
 });
 
@@ -58,6 +57,8 @@ setInterval(function() {
     for(var i in players) {
       var socket = players[i];
       socket.emit('updateGrid',grid);
+      socket.emit('updateTurn',turn);
+      socket.emit('updateGameOver',turn);
     }
 
-},1000/10);
+},1000/10); //updates 10 times a second
