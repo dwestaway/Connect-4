@@ -8,8 +8,8 @@ app.get('/', function(req, res) {
 app.use(express.static(__dirname + '/client'));
 //app.use('/client',express.static(__dirname + '/client'));
 
-//listen on port 2000
-serv.listen(2000);
+//listen on port 8000
+serv.listen(8000);
 console.log("Server started.");
 
 var players = {};
@@ -58,7 +58,7 @@ setInterval(function() {
       var socket = players[i];
       socket.emit('updateGrid',grid);
       socket.emit('updateTurn',turn);
-      socket.emit('updateGameOver',turn);
+      socket.emit('updateGameOver',gameOver);
     }
 
 },1000/10); //updates 10 times a second

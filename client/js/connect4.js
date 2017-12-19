@@ -21,16 +21,40 @@ socket.on('updateTurn', function(data) {
     {
         turn = data;
 
-        if(turn == 'red')
+        if(gameOver == false)
         {
-            text.innerHTML = "Red Player's Turn";
-            text.style.color = "red";
+            if(turn == 'red')
+            {
+                text.innerHTML = "Red Player's Turn";
+                text.style.color = "red";
 
+            }
+            else if(turn == 'yellow')
+            {
+                text.innerHTML = "Yellow Player's Turn";
+                text.style.color = "yellow";
+            }
         }
-        else if(turn == 'yellow')
+
+
+    }
+});
+//update gameOver state from server
+socket.on('updateGameOver', function(data) {
+
+    if(online == true)
+    {
+        gameOver = data;
+
+        if(gameOver == true && turn == 'yellow')
         {
-            text.innerHTML = "Yellow Player's Turn";
+            text.innerHTML = "Yellow Player is the winner!";
             text.style.color = "yellow";
+        }
+        else if(gameOver == true && turn == 'red')
+        {
+            text.innerHTML = "Red Player is the winner!";
+            text.style.color = "red";
         }
     }
 });
@@ -81,8 +105,6 @@ socket.on('updateTurn', function(data) {
                 grid[row][col] = '';
             }
           }
-          //send the grid to the server
-          socket.emit('sendGrid',grid);
 
           resetGame();
         }
@@ -96,6 +118,8 @@ socket.on('updateTurn', function(data) {
 
           //reset gameOver state
           gameOver = false;
+          //tell the server that gameOver is back to false
+          socket.emit('sendGameOver',gameOver);
 
           firstMove = true;
 
@@ -738,6 +762,8 @@ socket.on('updateTurn', function(data) {
             text.style.color = colour;
 
             gameOver = true;
+            //tell the server that the game is over
+            socket.emit('sendGameOver',gameOver);
         }
 
         //Check for free spaces next to the previous move
@@ -807,6 +833,7 @@ socket.on('updateTurn', function(data) {
         };
         buttonReset.onclick = function() {
             resetGrid();
+            socket.emit('sendGrid',grid); //send the resetted grid to the server
         };
         buttonOnline.onclick = function() {
             ai = false;
