@@ -64,6 +64,8 @@ socket.on('updateGrid', function(data) {
                 grid[row][col] = '';
             }
           }
+          socket.emit('sendGrid',grid);
+
           resetGame();
         }
 
@@ -762,6 +764,7 @@ socket.on('updateGrid', function(data) {
 
         var buttonPVP = document.getElementById("pvpButton");
         var buttonAI = document.getElementById("aiButton");
+        var buttonReset = document.getElementById("resetButton");
 
         buttonPVP.onclick = function() {
             ai = false;
@@ -769,6 +772,9 @@ socket.on('updateGrid', function(data) {
         };
         buttonAI.onclick = function() {
             ai = true;
+            resetGrid();
+        };
+        buttonReset.onclick = function() {
             resetGrid();
         };
 
