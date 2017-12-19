@@ -3,25 +3,23 @@ ctx.font = '30px Arial';
 
 var socket = io();
 
-socket.on('updateGrid', function(data) {
-    ctx.clearRect(0,0,700,600);
-    ctx.fillStyle = "#FF0000";
-    for(var i = 0; i < data.length; i++) {
-        ctx.fillRect(data[i].x,data[i].y,100,100);
-    }
-
-    refreshGrid();
-
-});
 
 socket.emit('hello');
 
-socket.emit('updateGrid2',grid);
 
 
 socket.on('serverMsg', function(data) {
     console.log(data.msg);
 });
+
+socket.on('updateGrid', function(data) {
+    grid = data;
+
+    refreshGrid();
+});
+
+
+
         //circle object
         var circle = {
             yellow:
@@ -36,6 +34,7 @@ socket.on('serverMsg', function(data) {
             }
         };
 
+
         var grid = [
             ['', '', '', '', '', '', ''],
             ['', '', '', '', '', '', ''],
@@ -43,7 +42,8 @@ socket.on('serverMsg', function(data) {
             ['', '', '', '', '', '', ''],
             ['', '', '', '', '', '', ''],
             ['', '', '', '', '', '', ''],
-        ],
+        ];
+
 
         //get canvas and access to draw on it
         canvas = document.getElementById('connect4');
@@ -175,15 +175,14 @@ socket.on('serverMsg', function(data) {
 
                     if(columnFull == false)
                     {
-                        drawCircle(column, 'red');
-
-
-
                         //change text to allow players to see whos turn it is
                         text.innerHTML = "Yellow Player's Turn";
                         text.style.color = "yellow";
                         //change players turn to yellow
                         turn = 'yellow';
+
+                        drawCircle(column, 'red');
+
                     }
                     else if(columnFull == true)
                     {
@@ -257,11 +256,11 @@ socket.on('serverMsg', function(data) {
 
                 if(columnFull == false)
                 {
-                    drawCircle(column, 'yellow');
-
                     text.innerHTML = "Red Player's Turn";
                     text.style.color = "red";
                     turn = 'red';
+
+                    drawCircle(column, 'yellow');
                 }
                 else if(columnFull == true)
                 {
@@ -269,6 +268,8 @@ socket.on('serverMsg', function(data) {
                 }
             }
             refreshGrid();
+
+            socket.emit('sendGrid',grid);
 
             }
         });
