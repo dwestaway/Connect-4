@@ -1,4 +1,27 @@
+var ctx = document.getElementById("connect4").getContext("2d");
+ctx.font = '30px Arial';
 
+var socket = io();
+
+socket.on('updateGrid', function(data) {
+    ctx.clearRect(0,0,700,600);
+    ctx.fillStyle = "#FF0000";
+    for(var i = 0; i < data.length; i++) {
+        ctx.fillRect(data[i].x,data[i].y,100,100);
+    }
+
+    refreshGrid();
+
+});
+
+socket.emit('hello');
+
+socket.emit('updateGrid2',grid);
+
+
+socket.on('serverMsg', function(data) {
+    console.log(data.msg);
+});
         //circle object
         var circle = {
             yellow:
@@ -153,6 +176,8 @@
                     if(columnFull == false)
                     {
                         drawCircle(column, 'red');
+
+
 
                         //change text to allow players to see whos turn it is
                         text.innerHTML = "Yellow Player's Turn";
