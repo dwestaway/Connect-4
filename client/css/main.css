@@ -17,9 +17,16 @@ h2 {
 	font-size: 30px;
 	font-family: monospace;
 	text-align: center;
+	margin-top: 10px;
 	color: red;
 	-webkit-text-stroke-width: 1px;
   -webkit-text-stroke-color: black;
+}
+h4 {
+	font-size: 18px;
+	font-family: monospace;
+	text-align: center;
+	margin: 0;
 }
 div {
 	text-align: center;

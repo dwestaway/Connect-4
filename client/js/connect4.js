@@ -202,6 +202,7 @@ socket.on('updateGameOver', function(data) {
         var gameOver = false;
 
         text = document.getElementById('text');
+        gmText = document.getElementById('gameModeText');
 
         //Mouse click listener
         canvas.addEventListener('click', function(evt) {
@@ -825,11 +826,13 @@ socket.on('updateGameOver', function(data) {
             ai = false;
             online = false;
             resetGrid();
+            gmText.innerHTML = "GAME MODE: Local Player vs Player"
         };
         buttonAI.onclick = function() {
             ai = true;
             online = false;
             resetGrid();
+            gmText.innerHTML = "GAME MODE: Player vs AI"
         };
         buttonReset.onclick = function() {
             resetGrid();
@@ -839,6 +842,7 @@ socket.on('updateGameOver', function(data) {
             ai = false;
             online = true;
             resetGrid();
+            gmText.innerHTML = "GAME MODE: Online Player vs Player"
         };
 
         //qunit practice
