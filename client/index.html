@@ -16,6 +16,17 @@
           <button type="button" id="onlineButton" class="button">Online 2 Player</button>
         </div>
 
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+        <script>
+          var socket = io();
+
+          socket.emit('hello');
+
+          socket.on('serverMsg', function(data) {
+              console.log(data.msg);
+          });
+        </script>
+
         <link rel="stylesheet" type="text/css" href="css/main.css" />
 
         <script src="js/jquery/jquery-3.2.1.min.js" type="text/javascript"></script>
