@@ -1,64 +1,64 @@
-////////////////////////
-//Socket/node.js stuff
-////////////////////////
-var socket = io();
+  ////////////////////////
+  //Socket/node.js stuff
+  ////////////////////////
+  var socket = io();
 
-//update grid from server
-socket.on('updateGrid', function(data) {
+  //update grid from server
+  socket.on('updateGrid', function(data) {
 
-    if(online == true)
-    {
-        grid = data;
+      if(online == true)
+      {
+          grid = data;
 
-        refreshGrid();
-    }
+          refreshGrid();
+      }
 
-});
-//update current turn from server
-socket.on('updateTurn', function(data) {
+  });
+  //update current turn from server
+  socket.on('updateTurn', function(data) {
 
-    if(online == true)
-    {
-        turn = data;
+      if(online == true)
+      {
+          turn = data;
 
-        if(gameOver == false)
-        {
-            if(turn == 'red')
-            {
-                text.innerHTML = "Red Player's Turn";
-                text.style.color = "red";
+          if(gameOver == false)
+          {
+              if(turn == 'red')
+              {
+                  text.innerHTML = "Red Player's Turn";
+                  text.style.color = "red";
 
-            }
-            else if(turn == 'yellow')
-            {
-                text.innerHTML = "Yellow Player's Turn";
-                text.style.color = "yellow";
-            }
-        }
+              }
+              else if(turn == 'yellow')
+              {
+                  text.innerHTML = "Yellow Player's Turn";
+                  text.style.color = "yellow";
+              }
+          }
 
 
-    }
-});
-//update gameOver state from server
-socket.on('updateGameOver', function(data) {
+      }
+  });
+  //update gameOver state from server
+  socket.on('updateGameOver', function(data) {
 
-    if(online == true)
-    {
-        gameOver = data;
+      if(online == true)
+      {
+          gameOver = data;
 
-        if(gameOver == true && turn == 'yellow')
-        {
-            text.innerHTML = "Red Player is the winner!";
-            text.style.color = "red";
-        }
-        else if(gameOver == true && turn == 'red')
-        {
-            text.innerHTML = "Yellow Player is the winner!";
-            text.style.color = "yellow";
-        }
-    }
-});
-////////////////////////
+          if(gameOver == true && turn == 'yellow')
+          {
+              text.innerHTML = "Red Player is the winner!";
+              text.style.color = "red";
+          }
+          else if(gameOver == true && turn == 'red')
+          {
+              text.innerHTML = "Yellow Player is the winner!";
+              text.style.color = "yellow";
+          }
+      }
+  });
+  ////////////////////////
 
         //circle object
         var circle = {
@@ -819,13 +819,13 @@ socket.on('updateGameOver', function(data) {
             ai = false;
             online = false;
             resetGrid();
-            gmText.innerHTML = "GAME MODE: Local Player vs Player"
+            gmText.innerHTML = "You are playing: Local Player vs Player"
         };
         buttonAI.onclick = function() {
             ai = true;
             online = false;
             resetGrid();
-            gmText.innerHTML = "GAME MODE: Player vs AI"
+            gmText.innerHTML = "You are playinge: Player vs AI"
         };
         buttonReset.onclick = function() {
             resetGrid();
@@ -835,7 +835,7 @@ socket.on('updateGameOver', function(data) {
             ai = false;
             online = true;
             resetGrid();
-            gmText.innerHTML = "GAME MODE: Online Player vs Player"
+            gmText.innerHTML = "You are playing: Online Player vs Player"
         };
 
         //qunit practice
