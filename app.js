@@ -8,10 +8,11 @@ app.get('/', function(req, res) {
 app.use(express.static(__dirname + '/client'));
 //app.use('/client',express.static(__dirname + '/client'));
 
-//listen on port 8000
+//listen on port 80
 serv.listen(8000);
 console.log("Server started.");
 
+//create variables that must be updated live and sent to clients
 var players = {};
 var grid = [
     ['', '', '', '', '', '', ''],
@@ -26,9 +27,7 @@ var gameOver = 'false';
 
 var io = require('socket.io')(serv,{});
 io.sockets.on('connection', function(socket){
-    socket.id = Math.random();
-    //socket.x = 0;
-    //socket.y = 0;
+    socket.id = Math.random(); //create random ID for each socket connection and add to players
     players[socket.id] = socket;
 
     //delete player id when player disconnects
@@ -38,15 +37,15 @@ io.sockets.on('connection', function(socket){
 
     console.log('Client connected through socket ' + socket.id);
 
-    //recieve grid data
+    //recieve grid data from client
     socket.on('sendGrid',function(data) {
         grid = data;
     });
-    //recieve turn data
+    //recieve turn data from client
     socket.on('sendTurn',function(data) {
         turn = data;
     });
-    //recieve gameOver data
+    //recieve gameOver data from client
     socket.on('sendGameOver',function(data) {
         gameOver = data;
     });
@@ -54,6 +53,7 @@ io.sockets.on('connection', function(socket){
 
 setInterval(function() {
 
+    //send data to every client connected
     for(var i in players) {
       var socket = players[i];
       socket.emit('updateGrid',grid);

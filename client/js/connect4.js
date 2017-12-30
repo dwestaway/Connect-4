@@ -48,18 +48,17 @@ socket.on('updateGameOver', function(data) {
 
         if(gameOver == true && turn == 'yellow')
         {
-            text.innerHTML = "Yellow Player is the winner!";
-            text.style.color = "yellow";
+            text.innerHTML = "Red Player is the winner!";
+            text.style.color = "red";
         }
         else if(gameOver == true && turn == 'red')
         {
-            text.innerHTML = "Red Player is the winner!";
-            text.style.color = "red";
+            text.innerHTML = "Yellow Player is the winner!";
+            text.style.color = "yellow";
         }
     }
 });
 ////////////////////////
-
 
         //circle object
         var circle = {
@@ -75,7 +74,7 @@ socket.on('updateGameOver', function(data) {
             }
         };
 
-
+        //game grid
         var grid = [
             ['', '', '', '', '', '', ''],
             ['', '', '', '', '', '', ''],
@@ -85,10 +84,146 @@ socket.on('updateGameOver', function(data) {
             ['', '', '', '', '', '', ''],
         ];
 
+        var ai = false; //player vs AI mode
+        var online = false; //online mode
+
+        var turn = 'red'; //current turn
+        var firstMove = true;
+        var bestMove = false; //if best move is found for the AI
+        var freeSpace = false; //if free space near previous AI move is available
+        var columnFull = false;
+        var aiCol = 0; //column of AI's current move
+        var AIlastMoveCol = 0; //column of AI's previous move
+        var AIlastMoveRow = 0; //row of AI's previous move
+        var gameOver = false; //game over state
+
+        text = document.getElementById('text'); //get text above the canvas
+        gmText = document.getElementById('gameModeText'); //get gamemode text above buttons
 
         //get canvas and access to draw on it
         canvas = document.getElementById('connect4');
         context = canvas.getContext('2d');
+
+        //Mouse click listener
+        canvas.addEventListener('click', function(evt) {
+
+            var column = 0;
+
+            if(gameOver == false)
+            {
+              if(turn == 'red')
+              {
+                  if(ai == false)
+                  {
+
+                      column = getColumnClick(event); //Find which column was clicked on
+                      checkColumn(column); //Check if column is full
+
+                      if(columnFull == false)
+                      {
+                          //change text to allow players to see whos turn it is
+                          text.innerHTML = "Yellow Player's Turn";
+                          text.style.color = "yellow";
+                          //change players turn to yellow
+                          turn = 'yellow';
+
+                          drawCircle(column, 'red');
+
+                      }
+                      else if(columnFull == true)
+                      {
+                         text.innerHTML = "Column is Full"
+                      }
+
+                  }
+                  else if(ai == true)
+                  {
+                      column = getColumnClick(event); //Find which column was clicked on
+                      checkColumn(column); //Check if column is full
+
+                      if(columnFull == false)
+                      {
+                          drawCircle(column, 'red');
+
+                          if(gameOver != true)
+                          {
+                              var column;
+
+                              bestMove = false;
+                              freeSpace = false;
+                              aiCol = 0;
+
+                              AIfindBestMove('yellow'); //check if AI is 1 from a 4 in a row, this will favor over the above
+                              AIfindBestMove('red'); //check if player is 1 from a 4 in a row
+
+                              //If no best moves were round, and not first turn, check for next best move
+                              if(bestMove == false && firstMove == false)
+                              {
+                                  AIfindNextBestMove(AIlastMoveRow, AIlastMoveCol);
+                              }
+
+                              firstMove = false; //first AI move is no longer true
+
+                              if(bestMove == true)
+                              {
+                                  column = aiCol + 1;
+                              }
+                              //check if free space near previous turn is true, and column is not out of grid range
+                              else if(freeSpace == true && aiCol < 7)
+                              {
+                                  column = aiCol + 1;
+                              }
+                              else
+                              {
+                                  //This only happens on first turn and if no space near previous turn
+                                  column = Math.floor((Math.random() * 7) + 1);
+                              }
+
+                          //reset text back, in case it was change by column being full
+                          text.innerHTML = "Red Player's Turn";
+
+                          drawCircle(column - 1, 'yellow');
+
+                          }
+                      }
+                      else if(columnFull == true)
+                      {
+                          text.innerHTML = "Column is Full"
+                      }
+
+                  }
+
+              }
+              else if(turn == 'yellow')
+              {
+
+                  column = getColumnClick(event);
+                  checkColumn(column);
+
+                  if(columnFull == false)
+                  {
+                      text.innerHTML = "Red Player's Turn";
+                      text.style.color = "red";
+                      turn = 'red';
+
+                      drawCircle(column, 'yellow');
+                  }
+                  else if(columnFull == true)
+                  {
+                      text.innerHTML = "Column is Full"
+                  }
+              }
+
+              refreshGrid();
+
+              if(online == true)
+              {
+                  //send current grid and turn to the server
+                  socket.emit('sendGrid',grid);
+                  socket.emit('sendTurn',turn);
+              }
+            }
+        });
 
         //Draw grid, loop through every item in grid array and call calculateCircle
         function refreshGrid() {
@@ -98,17 +233,17 @@ socket.on('updateGameOver', function(data) {
             }
           }
         }
+        //set all items in the grid array to blank
         function resetGrid() {
           for(row = 0; row < grid.length; row++) {
             for(col = 0; col < grid[row].length; col++) {
-                //set all contents of grid array to blank
                 grid[row][col] = '';
             }
           }
-
           resetGame();
         }
 
+        //reset all global variables locally and on server
         function resetGame() {
           //make sure game starts on red players turn after reset
           turn = 'red';
@@ -131,6 +266,7 @@ socket.on('updateGameOver', function(data) {
 
         //Calculate the row and column into exact coordinates on canvas
         function calculateCircle(col, row, name) {
+
           //cx = center x y coordinates calculated from column and row number
           var centerX = (canvas.width / 7) * (col + 1) - 50;
           var centerY = canvas.height - ((canvas.height / 6) * (row + 1) - 50);
@@ -148,21 +284,19 @@ socket.on('updateGameOver', function(data) {
           {
               createCircle(centerX, centerY, 'white');
           }
-
         }
 
         //Draw circle, parameters: x and y coordinates and colour
         function createCircle(x, y, circleColour) {
 
             context.beginPath();
-            //Draw circle, x and y are the middle coordinates for the circle, third parameter is radius
-            context.arc(x, y, 45, 0, 2 * Math.PI, false);
+            context.arc(x, y, 45, 0, 2 * Math.PI, false); //Draw circle, x and y are the middle coordinates for the circle, third parameter is radius, arc is the shape used for a circle
             context.fillStyle = circleColour;
             context.fill();
         }
 
         //Add circle colour into grid array
-        //loop through rows on the column parameter and check if its empty, first empty row add the circle of chosen colour and end loop
+        //loop through rows on the column and check if its empty, first empty row add the circle of chosen colour and end loop
         function drawCircle(column, colour) {
             for (var row = 0; row < grid.length; row++)
             {
@@ -188,154 +322,13 @@ socket.on('updateGameOver', function(data) {
 
         }
 
-        var ai = false;
-        var online = false;
-
-        var turn = 'red';
-        var firstMove = true;
-        var bestMove = false;
-        var freeSpace = false;
-        var columnFull = false;
-        var aiCol = 0;
-        var AIlastMoveCol = 0;
-        var AIlastMoveRow = 0;
-        var gameOver = false;
-
-        text = document.getElementById('text');
-        gmText = document.getElementById('gameModeText');
-
-        //Mouse click listener
-        canvas.addEventListener('click', function(evt) {
-
-            var column = 0;
-
-            if(gameOver == false)
-            {
-
-            //swap turns, change text and place circle on each click
-            if(turn == 'red')
-            {
-                if(ai == false)
-                {
-                    //Find which column was clicked on
-                    column = getColumnClick(event);
-
-                    //Check if column is full
-                    checkColumn(column);
-
-                    if(columnFull == false)
-                    {
-                        //change text to allow players to see whos turn it is
-                        text.innerHTML = "Yellow Player's Turn";
-                        text.style.color = "yellow";
-                        //change players turn to yellow
-                        turn = 'yellow';
-
-                        drawCircle(column, 'red');
-
-                    }
-                    else if(columnFull == true)
-                    {
-                       text.innerHTML = "Column is Full"
-                    }
-
-                }
-                else if(ai == true)
-                {
-                    column = getColumnClick(event);
-                    checkColumn(column);
-
-                    if(columnFull == false)
-                    {
-                        drawCircle(column, 'red');
-
-                        if(gameOver != true)
-                        {
-                            var column;
-
-                            bestMove = false;
-                            freeSpace = false;
-                            aiCol = 0;
-
-                            AIfindBestMove('yellow'); //check if AI is 1 from a 4 in a row, this will favor over the above
-                            AIfindBestMove('red'); //check if player is 1 from a 4 in a row
-
-                            //If no best moves were round, and not first turn, check for next best move
-                            if(bestMove == false && firstMove == false)
-                            {
-                                AIfindNextBestMove(AIlastMoveRow, AIlastMoveCol);
-                            }
-
-                            firstMove = false;
-
-                            if(bestMove == true)
-                            {
-                                column = aiCol + 1;
-                            }
-                            //check if free space near previous turn is true, and column is not out of grid range
-                            else if(freeSpace == true && aiCol < 7)
-                            {
-                                column = aiCol + 1;
-                            }
-                            else
-                            {
-                                //This only happens on first turn and if no space near previous turn
-                                column = Math.floor((Math.random() * 7) + 1);
-                            }
-
-                        //reset text back, in case it was change by column being full
-                        text.innerHTML = "Red Player's Turn";
-
-                        drawCircle(column - 1, 'yellow');
-
-                        }
-                    }
-                    else if(columnFull == true)
-                    {
-                        text.innerHTML = "Column is Full"
-                    }
-
-                }
-
-            }
-            else if(turn == 'yellow')
-            {
-
-                column = getColumnClick(event);
-                checkColumn(column);
-
-                if(columnFull == false)
-                {
-                    text.innerHTML = "Red Player's Turn";
-                    text.style.color = "red";
-                    turn = 'red';
-
-                    drawCircle(column, 'yellow');
-                }
-                else if(columnFull == true)
-                {
-                    text.innerHTML = "Column is Full"
-                }
-            }
-            refreshGrid();
-
-            if(online == true)
-            {
-                //send grid and turn to the server
-                socket.emit('sendGrid',grid);
-                socket.emit('sendTurn',turn);
-            }
-
-            }
-        });
-
         //Find out which column is clicked
         function getColumnClick(event) {
             //get the horizontal coordinates of the click on canvas
             var rect = canvas.getBoundingClientRect();
             var x = event.clientX - rect.left;
 
-            //divide by 100 because canvas is 700x600 and grid is 7x6, then round down
+            //divide the x coordinate by 100 because canvas is 700 pixels wide and grid is 7 wide, then round down (this will give number from 1-7)
             return Math.floor(x / 100);
         }
 
@@ -347,7 +340,7 @@ socket.on('updateGameOver', function(data) {
             //loop through all columns
             for(var col = 0; col < 7; col++)
             {
-
+                //get the first empty row in the column
                 row = checkColumn(col);
 
                 //if a best move is found, do not continue searching
