@@ -1,16 +1,16 @@
+//allow express to be used for file communication
 var express = require('express');
 var app = express();
-var serv = require('http').Server(app);
+var server = require('http').serverer(app);
 
+//send index.html to server with express
 app.get('/', function(req, res) {
     res.sendFile(__dirname + '/client/index.html');
 });
 app.use(express.static(__dirname + '/client'));
-//app.use('/client',express.static(__dirname + '/client'));
 
-//listen on port 80
-serv.listen(8000);
-console.log("Server started.");
+server.listen(8000); //listen on port 8000
+console.log("serverer started.");
 
 //create variables that must be updated live and sent to clients
 var players = {};
@@ -25,7 +25,7 @@ var grid = [
 var turn = 'red';
 var gameOver = 'false';
 
-var io = require('socket.io')(serv,{});
+var io = require('socket.io')(server,{});
 io.sockets.on('connection', function(socket){
     socket.id = Math.random(); //create random ID for each socket connection and add to players
     players[socket.id] = socket;
@@ -52,7 +52,6 @@ io.sockets.on('connection', function(socket){
 });
 
 setInterval(function() {
-
     //send data to every client connected
     for(var i in players) {
       var socket = players[i];
@@ -60,5 +59,6 @@ setInterval(function() {
       socket.emit('updateTurn',turn);
       socket.emit('updateGameOver',gameOver);
     }
+
 
 },1000/10); //updates 10 times a second
