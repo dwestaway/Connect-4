@@ -104,6 +104,8 @@
         canvas = document.getElementById('connect4');
         context = canvas.getContext('2d');
 
+        refreshGrid(); //load the grid when page is loaded
+
         //Mouse click listener
         canvas.addEventListener('click', function(evt) {
 
@@ -343,22 +345,24 @@
                 //get the first empty row in the column
                 row = checkColumn(col);
 
+                console.log('first empty is ' + row);
+
                 //if a best move is found, do not continue searching
                 if(columnFull == false)
                 {
+                  console.log('lol');
                   //Check for 3 up
                   if(row > 1)
                   {
                     //check for 2 upwards, replace aiCol if there is 3 upwards
                     if(grid[row-1][col] == colour && grid[row-2][col] == colour)
                     {
-                      //aiCol = col;
-                      //bestMove = true;
 
                       if(row > 2 && grid[row-3][col] == colour)
                       {
-                        aiCol = col;
-                        bestMove = true;
+                          aiCol = col;
+                          bestMove = true;
+                          return true;
                       }
                     }
                   }
@@ -368,6 +372,7 @@
                   {
                       aiCol = col;
                       bestMove = true;
+                      return true;
                   }
                   //Check for 3 to the left
                   //OOOX//
@@ -375,18 +380,21 @@
                   {
                       aiCol = col;
                       bestMove = true;
+                      return true;
                   }
                   //OOXO//
                   if(grid[row][col+1] == colour && grid[row][col-1] == colour && grid[row][col-2] == colour)
                   {
                       aiCol = col;
                       bestMove = true;
+                      return true;
                   }
                   //OXOO//
                   if(grid[row][col-1] == colour && grid[row][col+1] == colour && grid[row][col+2] == colour)
                   {
                       aiCol = col;
                       bestMove = true;
+                      return true;
                   }
                   /////O//
                   ////O///
@@ -398,6 +406,7 @@
                     {
                         aiCol = col;
                         bestMove = true;
+                        return true;
                     }
                   }
                   /////X//
@@ -410,6 +419,7 @@
                     {
                         aiCol = col;
                         bestMove = true;
+                        return true;
                     }
                   }
                   //O/////
@@ -422,6 +432,7 @@
                     {
                         aiCol = col;
                         bestMove = true;
+                        return true;
                     }
                   }
                   //X/////
@@ -434,6 +445,7 @@
                     {
                         aiCol = col;
                         bestMove = true;
+                        return true;
                     }
                   }
                   /////O//
@@ -445,7 +457,8 @@
                     if(grid[row-1][col-1] == colour && grid[row+1][col+1] == colour && grid[row+2][col+2] == colour)
                     {
                         aiCol = col;
-                        counterMove = true;
+                        bestMove = true;
+                        return true;
                     }
                   }
                   /////O//
@@ -457,7 +470,8 @@
                     if(grid[row-1][col-1] == colour && grid[row-2][col-2] == colour && grid[row+1][col+1] == colour)
                     {
                         aiCol = col;
-                        counterMove = true;
+                        bestMove = true;
+                        return true;
                     }
                   }
                   //O/////
@@ -469,7 +483,8 @@
                     if(grid[row-1][col+1] == colour && grid[row+1][col-1] == colour && grid[row+2][col-2] == colour)
                     {
                         aiCol = col;
-                        counterMove = true;
+                        bestMove = true;
+                        return true;
                     }
                   }
                   //O/////
@@ -481,11 +496,14 @@
                     if(grid[row-1][col+1] == colour && grid[row-2][col+2] == colour && grid[row+1][col-1] == colour)
                     {
                         aiCol = col;
-                        counterMove = true;
+                        bestMove = true;
+                        return true;
                     }
                   }
                 }
             }
+
+            return false;
         }
 
         //find first empty row in the column, or find out if column is full
@@ -734,8 +752,6 @@
           }
         }
 
-        //add reset grid function
-
         //Change text and colour to display the winner
         function winner(colour)
         {
@@ -837,11 +853,3 @@
             resetGrid();
             gmText.innerHTML = "You are playing: Online Player vs Player"
         };
-
-        //qunit practice
-        function sum(a,b)
-        {
-          return a+b;
-        }
-
-        refreshGrid();
