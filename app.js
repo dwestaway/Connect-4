@@ -1,7 +1,7 @@
 //allow express to be used for file communication
 var express = require('express');
 var app = express();
-var server = require('http').serverer(app);
+var server = require('http').Server(app);
 
 //send index.html to server with express
 app.get('/', function(req, res) {
@@ -10,7 +10,7 @@ app.get('/', function(req, res) {
 app.use(express.static(__dirname + '/client'));
 
 server.listen(8000); //listen on port 8000
-console.log("serverer started.");
+console.log("Server started.");
 
 //create variables that must be updated live and sent to clients
 var players = {};

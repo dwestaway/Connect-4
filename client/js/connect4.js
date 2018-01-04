@@ -345,12 +345,10 @@
                 //get the first empty row in the column
                 row = checkColumn(col);
 
-                console.log('first empty is ' + row);
-
                 //if a best move is found, do not continue searching
                 if(columnFull == false)
                 {
-                  console.log('lol');
+
                   //Check for 3 up
                   if(row > 1)
                   {

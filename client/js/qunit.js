@@ -7,8 +7,6 @@ var grid = [
     ['red', 'red', '', 'yellow', '', '', ''],
 ];
 
-var columnnFull = false;
-
 QUnit.test( "Find first empty in column test", function( assert ) {
   assert.equal(drawCircle(1,'red'), true, 'Column 2 row 3 is empty');
   assert.equal(drawCircle(0,'red'), false, 'Column 1 is full');
