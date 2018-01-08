@@ -9,7 +9,7 @@ app.get('/', function(req, res) {
 });
 app.use(express.static(__dirname + '/client'));
 
-server.listen(8000); //listen on port 8000
+server.listen(80); //listen on port 8000
 console.log("Server started.");
 
 //players connected to the server
