@@ -12,8 +12,10 @@ app.use(express.static(__dirname + '/client'));
 server.listen(8000); //listen on port 8000
 console.log("Server started.");
 
-//create variables that must be updated live and sent to clients
+//players connected to the server
 var players = {};
+
+//create variables that must be updated live and sent to clients
 var grid = [
     ['', '', '', '', '', '', ''],
     ['', '', '', '', '', '', ''],
